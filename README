@@ -1,0 +1,10 @@
+The working directory for the RF emission model is AskaryanModule.
+
+Any number of models may be added as options for the RF emmision model.
+Please keep them in separate directories, with a clear paper reference 
+somewhere in the sub-directory pertaining to a particular model.
+
+Models included:
+Ralston and Buniy, 2001 (saddle-point approximation)
+1D ARZ, written by Eugene Hong (ARA), from PhD dissertation and Testbed analysis.
+
