@@ -25,8 +25,6 @@ int main(int argc, char **argv){
         vector<float> times = Eshow->at(0);
         vector<float> eTheta = Eshow->at(1);
         delete Eshow;
-        //Critical frequency first, then data.
-        out<<1.0/(2.0*(times[1]-times[0]))<<" "; //GHz
         for(int j=0;j<eTheta.size();++j) out<<" "<<eTheta[j]<<" ";
         out<<endl;
     }

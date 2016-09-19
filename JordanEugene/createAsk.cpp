@@ -31,7 +31,6 @@ int main(int argc, char **argv){
         E_t->clear();
         E_t = h->GetVm_FarField_Tarray(fracs,0.1);
         vector<float>::iterator i;
-        out<<1.0/(2.0*dt)<<" ";
         for (i=E_t->begin(); i!=E_t->end(); ++i) out<<(*i)<<" ";
         out<<endl;
         delete fracs;
