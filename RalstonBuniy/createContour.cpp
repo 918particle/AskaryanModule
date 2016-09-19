@@ -28,7 +28,7 @@ int main(int argc, char **argv){
 		h->setAskTheta(theta*PI/180.0);
 		vector<vector<float> > *Eshow = new vector<vector<float> >;
 		Eshow = h->E_t();
-		vector<float> eTheta = Eshow->at(0);
+		vector<float> eTheta = Eshow->at(1);
 		delete Eshow;
 		for(int j=0;j<eTheta.size();++j) out<<eTheta[j]<<" ";
 		out<<endl;
