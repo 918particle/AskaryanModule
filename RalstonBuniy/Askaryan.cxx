@@ -349,7 +349,7 @@ void Askaryan::lpmEffect(){
 }
 
 void Askaryan::setFormScale(float d){
-    _rho0 = d;
+    _rho0 = d; //rho0 means rho0, not sqrt(2pi)rho0
 }
 
 void Askaryan::toggleFormFactor(){
