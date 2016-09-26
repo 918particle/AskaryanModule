@@ -14,7 +14,7 @@ int main(int argc, char **argv){
     float fc = 100.0;
     for(float x=df;x<fc;x=x+df) freqs->push_back(x);
     Askaryan *h = new Askaryan();
-    h->setFormScale(1/(sqrt(2.0*3.14159)*atof(argv[3])));
+    h->setFormScale(1/(sqrt(2.0*3.14159)*0.0513));
     h->setAskFreq(freqs);
     h->standardInitialize();
     h->emShower(atof(argv[1]));
@@ -28,7 +28,7 @@ int main(int argc, char **argv){
 		h->setAskTheta(theta*PI/180.0);
 		vector<vector<float> > *Eshow = new vector<vector<float> >;
 		Eshow = h->E_t();
-		vector<float> eTheta = Eshow->at(0);
+		vector<float> eTheta = Eshow->at(1);
 		delete Eshow;
 		for(int j=0;j<eTheta.size();++j) out<<eTheta[j]<<" ";
 		out<<endl;

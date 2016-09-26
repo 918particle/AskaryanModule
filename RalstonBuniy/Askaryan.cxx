@@ -262,8 +262,7 @@ void Askaryan::emShower(float E){
         excess = 0.30;
     }
 	this->setNmax(excess*(*n_max)/1000.0);
-	//find depth, which is really the FWHM of this Greissen formula.  I
-	//chose the 1-sigma width to better represent the gaussian.
+	//find depth, which is really the FWHM of this Greissen formula.
 	std::vector<float>::iterator i;
 	for(i=nx->begin();i!=nx->end();++i){
 		if((*i)/(*n_max)>0.606531) break;
