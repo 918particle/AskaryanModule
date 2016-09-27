@@ -229,13 +229,6 @@ std::vector<float>* Askaryan::time(){
 	return result;
 }
 
-void Askaryan::standardInitialize(){
-	this->setAskDepthA(STANDARD_ASK_DEPTH);
-	this->setAskR(STANDARD_ASK_R);
-	this->setNmax(STANDARD_ASK_NMAX);
-	this->setAskTheta(THETA_C*PI/180.0);
-}
-
 void Askaryan::emShower(float E){
     this->setAskE(E);
     this->_isEM = 1;

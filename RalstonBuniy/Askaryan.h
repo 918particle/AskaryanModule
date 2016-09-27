@@ -34,7 +34,11 @@ class Askaryan {
         Askaryan(): _isEM(0), //EM shower, use emShower()
                     _isHAD(0), //HAD shower, use hadShower()
                     _rho0(10.0),
-                    _useFormFactor(true) {}; //Apply form factor{};
+                    _useFormFactor(true),
+                    _askaryanDepthA(STANDARD_ASK_DEPTH),
+                    _askaryanR(STANDARD_ASK_R),
+                    _Nmax(STANDARD_ASK_NMAX),
+                    _askaryanTheta(THETA_C*PI/180.0) {};
         void toggleFormFactor(); //What it sounds like: use or don't use form factor.
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
@@ -45,7 +49,6 @@ class Askaryan {
 		float criticalF(); //GHz
         float getAskE(); //GeV
         float getAskDepthA(); //m
-		void standardInitialize();
 		void emShower(float); //Shower parameters from energy in GeV
 		void hadShower(float); //Shower parameters from energy in GeV
         void setFormScale(float); //Set shape of shower (meters).
