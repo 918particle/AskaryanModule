@@ -12,7 +12,7 @@ int main(int argc, char **argv){
     vector<float> *freqs = new vector<float>;
     float df = 0.05;
     float fc = 100.0;
-    for(float x=df;x<fc;x=x+df) freqs->push_back(x);
+    for(float x=0;x<fc;x=x+df) freqs->push_back(x);
     Askaryan *h = new Askaryan();
     h->setFormScale(1/(sqrt(2.0*3.14159)*0.0513));
     h->setAskFreq(freqs);
