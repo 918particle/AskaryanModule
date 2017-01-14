@@ -48,10 +48,11 @@ class Askaryan {
 		void setAskE(float); //GeV
 		float criticalF(); //GHz
         float getAskE(); //GeV
+        float getAskR(); //meters
         float getAskDepthA(); //m
 		void emShower(float); //Shower parameters from energy in GeV
 		void hadShower(float); //Shower parameters from energy in GeV
-        void setFormScale(float); //Set shape of shower (meters).
+        void setFormScale(float); //Set shape of shower (meters^{-1}).
 		std::vector<float>* k(); //1/meters
 		std::vector<float>* eta(); //unitless
 		std::vector<cf>* I_ff(); //m
