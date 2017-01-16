@@ -37,8 +37,7 @@ int main(int argc, char **argv)
     t = h->time();
     R = h->getAskR();
     ofstream out(argv[2]);
-//    for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<e[j]*R<<" "<<endl;
-    for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<Eq16(t->at(j)-30,Energy/1000.0,1/(2.0*f_max))<<" "<<endl;
+    for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<e[j]*R<<" "<<Eq16(t->at(j)-30,Energy/1000.0,1/(2.0*f_max))<<" "<<endl;
     out.close();
     
     delete h;
