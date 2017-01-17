@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     if(isEMShower) h->emShower(Energy);
     else if(isHADShower) h->hadShower(Energy);
     else return -1;
-    h->setFormScale(4.8);
+    h->setFormScale(7.8);
     h->lpmEffect();
     Eshow = h->E_t();
     e = Eshow->at(whichComponent);
