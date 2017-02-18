@@ -4,9 +4,10 @@
 #include <ctime>
 #include <iostream>
 #include <complex>
+#include <algorithm>
 using namespace std;
 
-float Eq16(float,float,float);
+float Eq16(float,float);
 
 int main(int argc, char **argv)
 {
@@ -26,18 +27,18 @@ int main(int argc, char **argv)
     
     for(float i=f_min;i<f_max;i+=df_ghz) freqs->push_back(i);
     h->setAskFreq(freqs);
-    h->setAskTheta((THETA_C-0.3)*PI/180.0);
+    h->setAskTheta((THETA_C)*PI/180.0);
     if(isEMShower) h->emShower(Energy);
     else if(isHADShower) h->hadShower(Energy);
     else return -1;
-    h->setFormScale(7.5);
+    h->setFormScale(7.8);
     h->lpmEffect();
     Eshow = h->E_t();
     e = Eshow->at(whichComponent);
     t = h->time();
     R = h->getAskR();
     ofstream out(argv[2]);
-    for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<e[j]*R<<" "<<Eq16(t->at(j)-30,Energy/1000.0,1/(2.0*f_max))<<" "<<endl;
+    for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<R*e[j]<<" "<<Eq16(t->at(j)-*max_element(t->begin(),t->end())/2.0,Energy/1000.0)<<endl;
     out.close();
     
     delete h;
@@ -46,9 +47,9 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-float Eq16(float t,float E,float dt)
+float Eq16(float t,float E)
 {
-    float norm = 1.4e-5*E/dt; //V E is in TeV, and dt is in ns
+    float norm = 1.4e-14*E*1.0e9; //V ns per ns
     if(t>=0.0)
     {
         return norm*((-1.0/0.057)*exp(-t/0.057)-3*2.87*pow(1+2.87*t,-4));
