@@ -10,9 +10,7 @@ int main(int argc, char **argv){
     char title[100];
     vector<float> *freqs = new vector<float>;
     Askaryan *h = new Askaryan();
-    //h->toggleFormFactor();
     h->setAskFreq(freqs);
-    h->standardInitialize();
     h->emShower(atof(argv[1]));
     h->setAskDepthA(1.5);
     h->setAskR(1000.0);
