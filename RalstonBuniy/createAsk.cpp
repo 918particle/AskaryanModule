@@ -17,10 +17,8 @@ int main(int argc, char **argv){
 	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e+0);
 	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e+1);
     Askaryan *h = new Askaryan();
-    //h->toggleFormFactor();
-    h->setFormScale(1.0/(sqrt(2.0*3.14159)*0.1));
+    h->setFormScale(1/(sqrt(2.0*3.14159)*0.03));
     h->setAskFreq(freqs);
-    h->standardInitialize();
     h->emShower(atof(argv[1]));
     h->setAskDepthA(1.5);
     h->setAskR(1000.0);
