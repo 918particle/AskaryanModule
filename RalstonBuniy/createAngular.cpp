@@ -14,7 +14,7 @@ int main(int argc, char **argv){
     h->emShower(atof(argv[1]));
     h->setAskDepthA(1.5);
     h->setAskR(1000.0);
-    h->setFormScale(1.0/(sqrt(2.0*3.14159)));
+    h->setFormScale(1.0/(sqrt(2.0*3.14159)*0.01));
     sprintf(title,"shower_%s.dat",argv[2]);
     freqs->push_back(atof(argv[3])); //1 GHz
     ofstream out(title);
