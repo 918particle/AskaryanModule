@@ -46,7 +46,7 @@ for i=1:N
     semilogy(theta(:,i),E_zhs,'--','Color',[(N-i)/N (N-i)/N (N-i)/N],'LineWidth',linewidth);
 end
 xlabel('Frequency [MHz]');
-ylabel('RE/E_{\nu}[V/MHz/TeV]');
+ylabel('RE/E_{C}[V/MHz/TeV]');
 axis(axisVector);
 
 ht1 = text(31,3e-9,'0.25 GHz');
@@ -67,4 +67,4 @@ set(ht1,'fontsize',18);
 set(ht2,'fontsize',18);
 set(ht3,'fontsize',18);
 
-print -dpdf 'March10_plot1.pdf'
+print -dpdf 'February20_plot1.pdf'
