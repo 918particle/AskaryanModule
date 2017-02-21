@@ -3,7 +3,7 @@ clear; home; close;
 fontsize = 26;
 fontname = 'Courier';
 linewidth = 10.0;
-axisVector = [1e1 1e3 0 180];
+axisVector = [1e1 1e3 -180 180];
 offset = -12;
 offset2 = 6;
 

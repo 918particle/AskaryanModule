@@ -14,10 +14,9 @@ int main(int argc, char **argv){
     for(float f=df;f<10.0;f=f+df) freqs->push_back(f);
     Askaryan *h = new Askaryan();
     h->setAskFreq(freqs);
-    h->standardInitialize();
     h->emShower(atof(argv[1]));
     h->lpmEffect();
-    h->setFormScale(1.0/(sqrt(2.0*PI)*0.1));
+    h->setFormScale(1.0/(sqrt(2.0*3.14159)*0.01));
     float theta = atof(argv[2]);
     sprintf(title,"shower_%s.dat",argv[3]);
     ofstream out(title);
