@@ -16,9 +16,9 @@ int main(int argc, char **argv){
     h->setAskFreq(freqs);
     h->emShower(atof(argv[1]));
     h->lpmEffect();
-    h->setFormScale(1.0/(sqrt(2.0*3.14159)*0.01));
+    h->setFormScale(1.0/(sqrt(2.0*3.14159)*0.1));
     float theta = atof(argv[2]);
-    sprintf(title,"shower_%s.dat",argv[3]);
+    sprintf(title,"shower_%s_F.dat",argv[3]);
     ofstream out(title);
     h->setAskTheta(theta*PI/180.0);
     vector<vector<float> > *Eshow = new vector<vector<float> >;
