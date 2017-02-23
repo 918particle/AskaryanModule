@@ -312,6 +312,7 @@ void Askaryan::hadShower(float E){
 void Askaryan::lpmEffect(){
     //"Accounts" for the "LPM effect," by "stretching" the shower profile, according to
     //Klein and Gerhardt (2010). Polynomial fit to figure 9 for EM and Hadronic.
+    float prior_a = this->getAskDepthA();
     
     if(_isEM){
         //EM fit parameters
@@ -326,6 +327,10 @@ void Askaryan::lpmEffect(){
         float a = pow(10.0,log10_shower_depth);
         this->setAskDepthA(a);
         //Right here, record the reduction in n_max that I don't believe in.
+        if(_strictLowFreqLimit)
+        {
+			this->setNmax(_Nmax/(a/prior_a));
+		}
     }
     if(_isHAD){
         //HAD fit parameters...should we do this at all?
@@ -339,6 +344,11 @@ void Askaryan::lpmEffect(){
         float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
         float a = pow(10.0,log10_shower_depth);
         this->setAskDepthA(a);
+        //Right here, record the reduction in n_max that I don't believe in.
+        if(_strictLowFreqLimit)
+        {
+			this->setNmax(_Nmax/(a/prior_a));
+		}
     }
 }
 
@@ -348,6 +358,10 @@ void Askaryan::setFormScale(float d){
 
 void Askaryan::toggleFormFactor(){
     _useFormFactor = !_useFormFactor;
+}
+
+void Askaryan::toggleLowFreqLimit(){
+	_strictLowFreqLimit = !_strictLowFreqLimit;
 }
 
 float Askaryan::getAskR(){

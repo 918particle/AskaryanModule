@@ -29,7 +29,11 @@ class Askaryan {
         int _isEM; //Electromagnetic parameterizations
         int _isHAD; //Hadronic parameterizations
         float _rho0; //Form factor parameter, with units 1/m
-        bool _useFormFactor; //Assume a gaussian form factor in z and rho (phi symmetry).
+        //Use the _rho0 parameter above, in a single exponential model from the complex analysis paper (2017)
+        bool _useFormFactor;
+        //Require that even under the LPM elongation, the low-frequency radiation is the same as without LPM
+        //Similar to a strict total track length requirement
+        bool _strictLowFreqLimit; 
 	public:
         Askaryan(): _isEM(0), //EM shower, use emShower()
                     _isHAD(0), //HAD shower, use hadShower()
@@ -38,8 +42,10 @@ class Askaryan {
                     _askaryanDepthA(STANDARD_ASK_DEPTH),
                     _askaryanR(STANDARD_ASK_R),
                     _Nmax(STANDARD_ASK_NMAX),
-                    _askaryanTheta(THETA_C*PI/180.0) {};
+                    _askaryanTheta(THETA_C*PI/180.0),
+                    _strictLowFreqLimit(false) {};
         void toggleFormFactor(); //What it sounds like: use or don't use form factor.
+        void toggleLowFreqLimit(); //What it sounds like: turn on strictLowFreqLimit.
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
 		void setAskR(float); //m
