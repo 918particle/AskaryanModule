@@ -235,9 +235,9 @@ void Askaryan::emShower(float E){
     float E_CRIT = 0.073; //GeV
 	//Greissen EM shower profile from Energy E in GeV.
 	std::vector<float> *nx = new std::vector<float>;
-	float max_x = 50.0; //maximum radiation length in g/cm^2
+	float max_x = 50.0; //maximum number of radiation lengths
 	float dx = 0.01; //small enough bin in depth for our purposes.
-	float x_start = dx; //radiation length in g/cm^2
+	float x_start = dx; //starting radiation length
 	for(float x=x_start;x<max_x;x+=dx){
         float a = 0.31/sqrt(log(E/E_CRIT));
         float b = x;
@@ -247,13 +247,7 @@ void Askaryan::emShower(float E){
 	}
     //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
     std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
-    float excess=0.0;
-    if(dx*(std::distance(nx->begin(),n_max))/ICE_DENSITY < 1500.0){
-        excess = 0.2+dx*(std::distance(nx->begin(),n_max));
-    }
-    else{
-        excess = 0.30;
-    }
+    float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
 	this->setNmax(excess*(*n_max)/1000.0);
 	//find depth, which is really the FWHM of this Greissen formula.
 	std::vector<float>::iterator i;
@@ -288,13 +282,7 @@ void Askaryan::hadShower(float E){
 	}
     //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
     std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
-    float excess=0.0;
-    if(dx*(std::distance(nx->begin(),n_max))/ICE_DENSITY < 1500.0){
-        excess = 0.2+dx*(std::distance(nx->begin(),n_max));
-    }
-    else{
-        excess = 0.30;
-    }
+    float excess=0.09+dx*(std::distance(nx->begin(),n_max))/ICE_DENSITY*1.0e-4;
 	this->setNmax(excess*(*n_max)/1000.0);
 	//find depth, which is really the FWHM of this Gaisser-Hillas 
 	//formula.  I chose the 1-sigma width to better represent the gaussian.
@@ -333,22 +321,22 @@ void Askaryan::lpmEffect(){
 		}
     }
     if(_isHAD){
-        //HAD fit parameters...should we do this at all?
-        float p1 = 8.0583;
-        float p2 = -2.1100;
-        float p3 = 2.3683e-1;
-        float p4 = -1.2649e-2;
-        float p5 = 3.3106e-4;
-        float p6 = -3.4270e-6;
-        float e = log10(_E)+9.0; //log_10 of Energy in eV
-        float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
-        float a = pow(10.0,log10_shower_depth);
-        this->setAskDepthA(a);
-        //Right here, record the reduction in n_max that I don't believe in.
-        if(_strictLowFreqLimit)
-        {
-			this->setNmax(_Nmax/(a/prior_a));
-		}
+//        //HAD fit parameters...should we do this at all?
+//        float p1 = 8.0583;
+//        float p2 = -2.1100;
+//        float p3 = 2.3683e-1;
+//        float p4 = -1.2649e-2;
+//        float p5 = 3.3106e-4;
+//        float p6 = -3.4270e-6;
+//        float e = log10(_E)+9.0; //log_10 of Energy in eV
+//        float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
+//        float a = pow(10.0,log10_shower_depth);
+//        this->setAskDepthA(a);
+//        //Right here, record the reduction in n_max that I don't believe in.
+//        if(_strictLowFreqLimit)
+//        {
+//			this->setNmax(_Nmax/(a/prior_a));
+//		}
     }
 }
 
@@ -366,6 +354,10 @@ void Askaryan::toggleLowFreqLimit(){
 
 float Askaryan::getAskR(){
     return _askaryanR;
+}
+
+float Askaryan::getAskNmax(){
+    return _Nmax;
 }
 
 int factorial(int n){
