@@ -10,6 +10,7 @@ int main(int argc, char **argv){
     char title[100];
     vector<float> *freqs = new vector<float>;
     Askaryan *h = new Askaryan();
+    h->setAskR(atof(argv[6]));
     sprintf(title,"shower_%s.dat",argv[2]);
     freqs->push_back(atof(argv[3])); //1 GHz
     h->setAskFreq(freqs);
