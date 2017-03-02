@@ -12,14 +12,15 @@ int main(int argc, char **argv){
     Askaryan *h = new Askaryan();
     h->setAskR(atof(argv[6]));
     sprintf(title,"shower_%s.dat",argv[2]);
-    freqs->push_back(atof(argv[3])); //1 GHz
+    freqs->push_back(atof(argv[3]));
     h->setAskFreq(freqs);
-    if(atoi(argv[5])==1.0)
+    if(atof(argv[5])==1.0)
     {
 		h->emShower(atof(argv[1]));
         h->toggleLowFreqLimit();
         h->lpmEffect();
         h->setFormScale(1.0/(sqrt(2.0*3.14159)*atof(argv[4])));
+        std::cout<<"EM: Energy: "<<atof(argv[1])<<" Frequency: "<<atof(argv[3])<<" Distance: "<<atof(argv[6])<<" Eta: "<<h->getAskEta(atof(argv[3]))<<std::endl;
 	}
 	else
 	{
@@ -27,6 +28,7 @@ int main(int argc, char **argv){
         h->toggleLowFreqLimit();
         h->lpmEffect();
         h->setFormScale(1.0/(sqrt(2.0*3.14159)*atof(argv[4])));
+        std::cout<<"Had: Energy: "<<atof(argv[1])<<" Frequency: "<<atof(argv[3])<<" Distance: "<<atof(argv[6])<<" Eta: "<<h->getAskEta(atof(argv[3]))<<std::endl;
 	}
     ofstream out(title);
     float dtheta = 0.1;

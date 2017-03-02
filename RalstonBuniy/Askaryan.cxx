@@ -356,6 +356,10 @@ float Askaryan::getAskR(){
     return _askaryanR;
 }
 
+float Askaryan::getAskEta(float nu){
+    return 2.0*3.14159*nu/0.3/_askaryanR*_askaryanDepthA*_askaryanDepthA*sin(_askaryanTheta)*sin(_askaryanTheta);
+}
+
 float Askaryan::getAskNmax(){
     return _Nmax;
 }
