@@ -57,6 +57,7 @@ class Askaryan {
         float getAskR(); //meters
         float getAskDepthA(); //m
         float getAskNmax(); //pure number
+        float getAskEta(float); //pure number
 		void emShower(float); //Shower parameters from energy in GeV
 		void hadShower(float); //Shower parameters from energy in GeV
         void setFormScale(float); //Set shape of shower (meters^{-1}).

@@ -321,22 +321,22 @@ void Askaryan::lpmEffect(){
 		}
     }
     if(_isHAD){
-//        //HAD fit parameters...should we do this at all?
-//        float p1 = 8.0583;
-//        float p2 = -2.1100;
-//        float p3 = 2.3683e-1;
-//        float p4 = -1.2649e-2;
-//        float p5 = 3.3106e-4;
-//        float p6 = -3.4270e-6;
-//        float e = log10(_E)+9.0; //log_10 of Energy in eV
-//        float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
-//        float a = pow(10.0,log10_shower_depth);
-//        this->setAskDepthA(a);
-//        //Right here, record the reduction in n_max that I don't believe in.
-//        if(_strictLowFreqLimit)
-//        {
-//			this->setNmax(_Nmax/(a/prior_a));
-//		}
+        //HAD fit parameters...should we do this at all?
+        //~ float p1 = 8.0583;
+        //~ float p2 = -2.1100;
+        //~ float p3 = 2.3683e-1;
+        //~ float p4 = -1.2649e-2;
+        //~ float p5 = 3.3106e-4;
+        //~ float p6 = -3.4270e-6;
+        //~ float e = log10(_E)+9.0; //log_10 of Energy in eV
+        //~ float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
+        //~ float a = pow(10.0,log10_shower_depth);
+        //~ this->setAskDepthA(a);
+        //~ //Right here, record the reduction in n_max that I don't believe in.
+        //~ if(_strictLowFreqLimit)
+        //~ {
+			//~ this->setNmax(_Nmax/(a/prior_a));
+		//~ }
     }
 }
 
@@ -354,6 +354,10 @@ void Askaryan::toggleLowFreqLimit(){
 
 float Askaryan::getAskR(){
     return _askaryanR;
+}
+
+float Askaryan::getAskEta(float nu){
+    return 2.0*3.14159*nu/0.3/_askaryanR*_askaryanDepthA*_askaryanDepthA*sin(_askaryanTheta)*sin(_askaryanTheta);
 }
 
 float Askaryan::getAskNmax(){
