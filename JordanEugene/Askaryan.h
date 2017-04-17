@@ -4,7 +4,7 @@
 //Author: Jordan C. Hanson
 //Sept 11, 2015
 //Adapted from AraSim 1.0, and Eugene Hong's dissertation, and Signal.hh class.
-
+//test comment
 //This is a similar class choice to EugeneHong, but specifying exact time bins rather than
 //letting the code determine the time bins.  Also contains similar methods to RalstonBuniy
 
