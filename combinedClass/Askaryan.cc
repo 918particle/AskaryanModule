@@ -8,6 +8,18 @@ void Askaryan::setAskFreq(std::vector<float> *x){
 	_askaryanFreq = x;
 }
 
+void Askaryan::setAskR(float x){
+	_askaryanR = x;
+}
+
+void Askaryan::setAskTheta(float x){
+	_askaryanTheta = x;
+}
+
+void Askaryan::setAskE(float x){
+	_E = x;
+}
+
 float Askaryan::criticalF(){
 		return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
 }

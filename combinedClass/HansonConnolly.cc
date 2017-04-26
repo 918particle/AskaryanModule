@@ -26,28 +26,12 @@ std::vector<float>* HansonConnolly::eta(){
 	return result;
 }
 
-void HansonConnolly::setAskTheta(float x){
-	_askaryanTheta = x;
-}
-
-void HansonConnolly::setAskR(float x){
-	_askaryanR = x;
-}
-
 void HansonConnolly::setAskDepthA(float x){
 	_askaryanDepthA = x;
 }
 
 void HansonConnolly::setNmax(float x){
 	_Nmax = x;
-}
-
-void HansonConnolly::setAskE(float x){
-	_E = x;
-}
-
-float HansonConnolly::getAskE(){
-    return _E;
 }
 
 float HansonConnolly::getAskDepthA(){
@@ -213,8 +197,8 @@ std::vector<std::vector<float> >* HansonConnolly::E_t(){
 }
 
 void HansonConnolly::emShower(float E){
-    this->setAskE(E);
-    this->_isEM = 1;
+    _E = E;
+    _isEM = 1;
     float E_CRIT = 0.073; //GeV
 	//Greissen EM shower profile from Energy E in GeV.
 	std::vector<float> *nx = new std::vector<float>;
@@ -231,7 +215,7 @@ void HansonConnolly::emShower(float E){
     //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
     std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
     float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
-	this->setNmax(excess*(*n_max)/1000.0);
+	_Nmax = excess*(*n_max)/1000.0;
 	//find depth, which is really the FWHM of this Greissen formula.
 	std::vector<float>::iterator i;
 	for(i=nx->begin();i!=nx->end();++i){
@@ -241,12 +225,12 @@ void HansonConnolly::emShower(float E){
 	for(j=nx->end();j!=nx->begin();--j){
 		if((*j)/(*n_max)>0.606531) break;
 	}
-	this->setAskDepthA(dx*std::distance(i,j)/ICE_DENSITY*ICE_RAD_LENGTH/100.0); //meters
+	_askaryanDepthA = dx*std::distance(i,j)/ICE_DENSITY*ICE_RAD_LENGTH/100.0; //meters
 }
 
 void HansonConnolly::hadShower(float E){
-	this->setAskE(E);
-    this->_isHAD = 1;
+	_E = E;
+    _isHAD = 1;
     //Gaisser-Hillas hadronic shower parameterization
     std::vector<float> *nx = new std::vector<float>;
     float max_x = 2000.0; //maximum depth in g/cm^2
@@ -266,7 +250,7 @@ void HansonConnolly::hadShower(float E){
     //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
     std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
     float excess=0.09+dx*(std::distance(nx->begin(),n_max))/ICE_DENSITY*1.0e-4;
-	this->setNmax(excess*(*n_max)/1000.0);
+	_Nmax = excess*(*n_max)/1000.0;
 	//find depth, which is really the FWHM of this Gaisser-Hillas 
 	//formula.  I chose the 1-sigma width to better represent the gaussian.
 	std::vector<float>::iterator i;
@@ -277,13 +261,13 @@ void HansonConnolly::hadShower(float E){
 	for(j=nx->end();j!=nx->begin();--j){
 		if((*j)/(*n_max)>0.606531) break;
 	}
-	this->setAskDepthA(dx*std::distance(i,j)/ICE_DENSITY/100.0); //meters
+	_askaryanDepthA = dx*std::distance(i,j)/ICE_DENSITY/100.0; //meters
 }
 
 void HansonConnolly::lpmEffect(){
     //"Accounts" for the "LPM effect," by "stretching" the shower profile, according to
     //Klein and Gerhardt (2010). Polynomial fit to figure 9 for EM and Hadronic.
-    float prior_a = this->getAskDepthA();
+    float prior_a = _askaryanDepthA;
     
     if(_isEM){
         //EM fit parameters
@@ -296,11 +280,11 @@ void HansonConnolly::lpmEffect(){
         float e = log10(_E)+9.0; //log_10 of Energy in eV
         float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
         float a = pow(10.0,log10_shower_depth);
-        this->setAskDepthA(a);
+        _askaryanDepthA = a;
         //Right here, record the reduction in n_max that I don't believe in.
         if(_strictLowFreqLimit)
         {
-			this->setNmax(_Nmax/(a/prior_a));
+			_Nmax = _Nmax/(a/prior_a);
 		}
     }
     if(_isHAD){
@@ -314,11 +298,11 @@ void HansonConnolly::lpmEffect(){
         //~ float e = log10(_E)+9.0; //log_10 of Energy in eV
         //~ float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
         //~ float a = pow(10.0,log10_shower_depth);
-        //~ this->setAskDepthA(a);
+        //~ _askaryanDepthA = a;
         //~ //Right here, record the reduction in n_max that I don't believe in.
         //~ if(_strictLowFreqLimit)
         //~ {
-			//~ this->setNmax(_Nmax/(a/prior_a));
+			//~ _Nmax = _Nmax/(a/prior_a);
 		//~ }
     }
 }
@@ -333,10 +317,6 @@ void HansonConnolly::toggleFormFactor(){
 
 void HansonConnolly::toggleLowFreqLimit(){
 	_strictLowFreqLimit = !_strictLowFreqLimit;
-}
-
-float HansonConnolly::getAskR(){
-    return _askaryanR;
 }
 
 float HansonConnolly::getAskEta(float nu){
