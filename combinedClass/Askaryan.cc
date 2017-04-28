@@ -21,7 +21,11 @@ void Askaryan::setAskE(float x){
 }
 
 float Askaryan::criticalF(){
-		return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
+	return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
+}
+
+std::vector<float>* Askaryan::freq(){
+	return _askaryanFreq;
 }
 
 std::vector<float>* Askaryan::time(){

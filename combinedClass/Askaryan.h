@@ -41,6 +41,7 @@ class Askaryan
         //Functions
         float criticalF(); //GHz
         std::vector<float>* time(); //ns
+        std::vector<float>* freq(); //GHz
     protected:
         //Data
         std::vector<float>* _askaryanFreq; //GHz

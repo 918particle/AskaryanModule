@@ -17,7 +17,7 @@ class HansonConnolly : public Askaryan {
     public :
         //Constructor/Destructor
         HansonConnolly() :
-            _isEM(0), //EM shower, use emShower()
+            _isEM(1), //EM shower, use emShower()
             _isHAD(0), //HAD shower, use hadShower()
             _rho0(10.0),
             _useFormFactor(true),
