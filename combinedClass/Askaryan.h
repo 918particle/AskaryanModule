@@ -33,6 +33,8 @@ class Askaryan
         //Virtual functions to be defined by derived classes
         virtual std::vector<std::vector<cf> >* E_omega()=0; //V/m/MHz.
         virtual std::vector<std::vector<float> >* E_t()=0; //V/m.
+        virtual void emShower(float)=0; //Argument is energy in GeV
+        virtual void hadShower(float)=0; //Argument is energy in GeV
         //Setting parameters
         void setAskR(float); //m
         void setAskTheta(float); //radians
