@@ -12,7 +12,16 @@ std::vector<std::vector<cf> >* ZHS::E_omega(){
 	std::vector<cf> *phiComp = new std::vector<cf>;
 	std::vector<float>::iterator j;
     for(j=_askaryanFreq->begin();j!=_askaryanFreq->end();++j)
-        result->push_back(2.0*PI*(*j)/(LIGHT_SPEED/INDEX));
+    {
+    	cf complexZero(0.0,0.0);
+    	rComp->push_back(complexZero);
+    	phiComp->push_back(complexZero);
+    	//Remember: _E is in GeV, so we must convert to TeV, and _normalization is in V/m/MHz, and _nu0 is in GHz
+    	float e_theta = _normalization*((*j)/_nu0)*(_E/1000.0)/(1+((*j)/_nu0)*((*j)/_nu0));
+    	float deltaTheta = 2.4*(_nu0/((*j)))*PI/180.0;
+    	e_theta *= exp(-0.5*(_askaryanTheta-THETA_C*PI/180.0)*(_askaryanTheta-THETA_C*PI/180.0)/(deltaTheta));
+    	thetaComp->push_back(cf(0.0,-1.0*e_theta/_askaryanR)); //The minus sign is a convention that doesn't have to be there.
+    }
 	//Electric field: r, theta, phi
 	std::vector<std::vector<cf> > *result = new std::vector<std::vector<cf> >;
 	result->push_back(*rComp);
@@ -78,18 +87,14 @@ std::vector<std::vector<float> >* ZHS::E_t(){
 		Etheta_t.push_back(out2[i][0]*df);
 		Ephi_t.push_back(out3[i][0]*df);
 	}
-    
-    
     //Note: The choice of sign in the Fourier transform convention should not determine physical
     //properties of the output.  The following code ensures the correct physical timing, according
-    //to the RB paper, and that the either choice of convention produces the same answer.
-    
+    //to the R (2001) paper, and that the either choice of convention produces the same answer.
     if(FFTW_CHOICE==FFTW_BACKWARD){
         std::reverse(Er_t.begin(),Er_t.end());
         std::reverse(Etheta_t.begin(),Etheta_t.end());
         std::reverse(Ephi_t.begin(),Ephi_t.end());
     }
-    
 	result->push_back(Er_t);
 	result->push_back(Etheta_t);
 	result->push_back(Ephi_t);
@@ -99,67 +104,9 @@ std::vector<std::vector<float> >* ZHS::E_t(){
 void ZHS::emShower(float E){
     _E = E;
     _isEM = 1;
-    float E_CRIT = 0.073; //GeV
-	//Greissen EM shower profile from Energy E in GeV.
-	std::vector<float> *nx = new std::vector<float>;
-	float max_x = 50.0; //maximum number of radiation lengths
-	float dx = 0.01; //small enough bin in depth for our purposes.
-	float x_start = dx; //starting radiation length
-	for(float x=x_start;x<max_x;x+=dx){
-        float a = 0.31/sqrt(log(E/E_CRIT));
-        float b = x;
-        float c = 1.5*x;
-        float d = log((3*x)/(x+2*log(E/E_CRIT)));
-		nx->push_back(a*exp(b-c*d));
-	}
-    //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
-    std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
-    float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
-	_Nmax = excess*(*n_max)/1000.0;
-	//find depth, which is really the FWHM of this Greissen formula.
-	std::vector<float>::iterator i;
-	for(i=nx->begin();i!=nx->end();++i){
-		if((*i)/(*n_max)>0.606531) break;
-	}
-	std::vector<float>::iterator j;
-	for(j=nx->end();j!=nx->begin();--j){
-		if((*j)/(*n_max)>0.606531) break;
-	}
-	_askaryanDepthA = dx*std::distance(i,j)/ICE_DENSITY*ICE_RAD_LENGTH/100.0; //meters
 }
 
 void ZHS::hadShower(float E){
 	_E = E;
     _isHAD = 1;
-    //Gaisser-Hillas hadronic shower parameterization
-    std::vector<float> *nx = new std::vector<float>;
-    float max_x = 2000.0; //maximum depth in g/cm^2
-	float dx = 1.0; //small enough bin in depth for our purposes.
-	float x_start = dx; //depth in g/cm^2
-    float S0 = 0.11842;
-    float X0 = 39.562; //g/cm^2
-    float lambda = 113.03; //g/cm^2
-    float Ec = 0.17006; //GeV
-    float Xmax = X0*log(E/Ec);
-	for(float x=x_start;x<max_x;x+=dx){
-		float a = S0*E/Ec*(Xmax-lambda)/Xmax*exp(Xmax/lambda-1);
-		float b = pow(x/(Xmax-lambda),Xmax/lambda);
-		float c = exp(-x/lambda);
-		nx->push_back(a*b*c);
-	}
-    //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
-    std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
-    float excess=0.09+dx*(std::distance(nx->begin(),n_max))/ICE_DENSITY*1.0e-4;
-	_Nmax = excess*(*n_max)/1000.0;
-	//find depth, which is really the FWHM of this Gaisser-Hillas 
-	//formula.  I chose the 1-sigma width to better represent the gaussian.
-	std::vector<float>::iterator i;
-	for(i=nx->begin();i!=nx->end();++i){
-		if((*i)/(*n_max)>0.606531) break;
-	}
-	std::vector<float>::iterator j;
-	for(j=nx->end();j!=nx->begin();--j){
-		if((*j)/(*n_max)>0.606531) break;
-	}
-	_askaryanDepthA = dx*std::distance(i,j)/ICE_DENSITY/100.0; //meters
 }

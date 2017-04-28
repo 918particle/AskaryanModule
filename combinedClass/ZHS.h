@@ -14,6 +14,9 @@ class ZHS : public Askaryan {
         ZHS() :
             _isEM(1), //EM shower, use emShower()
             _isHAD(0), //HAD shower, use hadShower()
+            _nu0(0.5), //nu0 parameter in ZHS
+            _normalization(1.1e-7)
+
         {};
         ~ZHS(){}; //What should we clean up?
         void emShower(float); //Shower parameters from energy in GeV
@@ -23,5 +26,7 @@ class ZHS : public Askaryan {
 	private:
         int _isEM; //Electromagnetic parameterizations
         int _isHAD; //Hadronic parameterizations
+        float _nu0; //The nu_{0} parameter in ZHS, in GHz
+        float _normalization; //1.1e-7 V/m/MHz
 };
 #endif
