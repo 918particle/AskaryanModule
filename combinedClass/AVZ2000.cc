@@ -1,11 +1,12 @@
 //Askaryan.cpp
 
 #include "Askaryan.h"
-#include "ZHS.h"
+#include "AVZ2000.h"
 #include <fftw3.h>
 #include <algorithm>
+#include <cmath>
 
-std::vector<std::vector<cf> >* ZHS::E_omega(){
+std::vector<std::vector<cf> >* AVZ2000::E_omega(){
     std::vector<cf> *rComp = new std::vector<cf>;
 	std::vector<cf> *thetaComp = new std::vector<cf>;
 	std::vector<cf> *phiComp = new std::vector<cf>;
@@ -16,10 +17,10 @@ std::vector<std::vector<cf> >* ZHS::E_omega(){
     	rComp->push_back(complexZero);
     	phiComp->push_back(complexZero);
     	//Remember: _E is in GeV, so we must convert to TeV, and _normalization is in V/m/MHz, and _nu0 is in GHz
-    	float e_theta = _normalization*((*j)/_nu0)*(_E/1000.0)/(1+((*j)/_nu0)*((*j)/_nu0));
-    	float deltaTheta = 2.4*(_nu0/((*j)))*PI/180.0;
+    	float e_theta = _normalization*((*j)/_nu0)*(_E/1000.0)/(1+pow((*j)/_nu1,1.44));
+    	float deltaTheta = 2.2*(_nu0/((*j)))*PI/180.0;
     	e_theta *= exp(-0.5*(_askaryanTheta-THETA_C*PI/180.0)*(_askaryanTheta-THETA_C*PI/180.0)/(deltaTheta));
-    	thetaComp->push_back(cf(0.0,-1.0*e_theta/_askaryanR)); //The minus sign is a convention that doesn't have to be there.
+    	thetaComp->push_back(cf(0.0,-1.0*e_theta/_askaryanR)); //The minus sign is a convention.
     }
 	//Electric field: r, theta, phi
 	std::vector<std::vector<cf> > *result = new std::vector<std::vector<cf> >;
@@ -29,7 +30,7 @@ std::vector<std::vector<cf> >* ZHS::E_omega(){
 	return result;
 }
 
-std::vector<std::vector<float> >* ZHS::E_t(){
+std::vector<std::vector<float> >* AVZ2000::E_t(){
     std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
 	e = E_omega();
 	std::vector<cf> e_r = e->at(0);
@@ -100,19 +101,24 @@ std::vector<std::vector<float> >* ZHS::E_t(){
 	return result;
 }
 
-void ZHS::emShower(float E){
+void AVZ2000::emShower(float E){
     _E = E;
     _isEM = 1;
     _isHAD = 0;
 }
 
-void ZHS::hadShower(float E){
+void AVZ2000::hadShower(float E){
 	_E = E;
     _isHAD = 1;
     _isEM = 0;
 }
 
-void ZHS::setPoleFrequency(float n)
+void AVZ2000::setNu0(float n)
 {
 	_nu0 = n;
+}
+
+void AVZ2000::setNu1(float n)
+{
+	_nu1 = n;
 }

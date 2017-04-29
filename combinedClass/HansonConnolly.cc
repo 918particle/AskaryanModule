@@ -199,6 +199,7 @@ std::vector<std::vector<float> >* HansonConnolly::E_t(){
 void HansonConnolly::emShower(float E){
     _E = E;
     _isEM = 1;
+    _isHAD = 0;
     float E_CRIT = 0.073; //GeV
 	//Greissen EM shower profile from Energy E in GeV.
 	std::vector<float> *nx = new std::vector<float>;
@@ -231,6 +232,7 @@ void HansonConnolly::emShower(float E){
 void HansonConnolly::hadShower(float E){
 	_E = E;
     _isHAD = 1;
+    _isEM = 0;
     //Gaisser-Hillas hadronic shower parameterization
     std::vector<float> *nx = new std::vector<float>;
     float max_x = 2000.0; //maximum depth in g/cm^2
