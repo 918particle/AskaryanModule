@@ -2,7 +2,7 @@
 #define ASKARYAN_H_
 //Askaryan class
 //Author: Jordan C. Hanson
-//Aug 27th, 2015
+//June 19th, 2018
 //Adapted from Ralston and Buniy (2001)
 
 //Variables defined for one interaction, (one angle and distance), 
@@ -44,8 +44,8 @@ class Askaryan {
                     _Nmax(STANDARD_ASK_NMAX),
                     _askaryanTheta(THETA_C*PI/180.0),
                     _strictLowFreqLimit(false) {};
-        void toggleFormFactor(); //What it sounds like: use or don't use form factor.
-        void toggleLowFreqLimit(); //What it sounds like: turn on strictLowFreqLimit.
+		void toggleFormFactor(); //What it sounds like: use or don't use form factor.
+		void toggleLowFreqLimit(); //What it sounds like: turn on strictLowFreqLimit.
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
 		void setAskR(float); //m
@@ -53,20 +53,20 @@ class Askaryan {
 		void setNmax(float); //per 1000
 		void setAskE(float); //GeV
 		float criticalF(); //GHz
-        float getAskE(); //GeV
-        float getAskR(); //meters
-        float getAskDepthA(); //m
-        float getAskNmax(); //pure number
-        float getAskEta(float); //pure number
+		float getAskE(); //GeV
+		float getAskR(); //meters
+		float getAskDepthA(); //m
+		float getAskNmax(); //pure number
+		float getAskEta(float); //pure number
 		void emShower(float); //Shower parameters from energy in GeV
 		void hadShower(float); //Shower parameters from energy in GeV
-        void setFormScale(float); //Set shape of shower (meters^{-1}).
+		void setFormScale(float); //Set shape of shower (meters^{-1}).
 		std::vector<float>* k(); //1/meters
 		std::vector<float>* eta(); //unitless
 		std::vector<cf>* I_ff(); //m
 		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
 		std::vector<std::vector<float> >* E_t(); //V/m
 		std::vector<float>* time(); //ns
-        void lpmEffect();
+		void lpmEffect();
 };
 #endif
