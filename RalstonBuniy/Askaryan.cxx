@@ -202,18 +202,14 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 		Etheta_t.push_back(out2[i][0]*df);
 		Ephi_t.push_back(out3[i][0]*df);
 	}
-    
-    
     //Note: The choice of sign in the Fourier transform convention should not determine physical
     //properties of the output.  The following code ensures the correct physical timing, according
     //to the RB paper, and that the either choice of convention produces the same answer.
-    
     if(FFTW_CHOICE==FFTW_BACKWARD){
         std::reverse(Er_t.begin(),Er_t.end());
         std::reverse(Etheta_t.begin(),Etheta_t.end());
         std::reverse(Ephi_t.begin(),Ephi_t.end());
     }
-    
 	result->push_back(Er_t);
 	result->push_back(Etheta_t);
 	result->push_back(Ephi_t);
@@ -249,7 +245,7 @@ void Askaryan::emShower(float E){
     std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
     float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
 	this->setNmax(excess*(*n_max)/1000.0);
-	//find depth, which is really the FWHM of this Greissen formula.
+	//find depth, which is really the FWHM of this Greisen formula.
 	std::vector<float>::iterator i;
 	for(i=nx->begin();i!=nx->end();++i){
 		if((*i)/(*n_max)>0.606531) break;
@@ -317,8 +313,8 @@ void Askaryan::lpmEffect(){
         //Right here, record the reduction in n_max that I don't believe in.
         if(_strictLowFreqLimit)
         {
-			this->setNmax(_Nmax/(a/prior_a));
-		}
+		this->setNmax(_Nmax/(a/prior_a));
+	}
     }
     if(_isHAD){
         //HAD fit parameters...should we do this at all?
@@ -335,8 +331,8 @@ void Askaryan::lpmEffect(){
         //~ //Right here, record the reduction in n_max that I don't believe in.
         //~ if(_strictLowFreqLimit)
         //~ {
-			//~ this->setNmax(_Nmax/(a/prior_a));
-		//~ }
+		//~ this->setNmax(_Nmax/(a/prior_a));
+	//~ }
     }
 }
 
@@ -362,13 +358,4 @@ float Askaryan::getAskEta(float nu){
 
 float Askaryan::getAskNmax(){
     return _Nmax;
-}
-
-int factorial(int n){
-    return (n==1||n==0) ? 1 : factorial(n-1)*n;
-}
-
-int dfactorial(int n)
-{
-    return (n==1||n==0) ? 1 : factorial(n-2)*n;
 }

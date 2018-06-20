@@ -15,9 +15,6 @@
 
 typedef std::complex<float> cf;
 
-int factorial(int);
-int dfactorial(int);
-
 class Askaryan {
 	protected:
 		float _askaryanTheta; //radians

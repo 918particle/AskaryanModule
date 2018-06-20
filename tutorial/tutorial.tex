@@ -29,7 +29,7 @@ git checkout simplified
 
 The above two lines of code will clone the git repository to the local machine, and checkout a branch named \textit{simplified.}  This branch contains just the basic class and source file, without numerious other directories, pseudo-data and plotting scripts used to write the paper (Astroparticle Physics \textbf{91} (2017) p. 75-89).  Typing \textit{ls} shows three different directories: \textit{RalstonBuniy}, \textit{JordanEugene}, and \textit{EugeneHong}.  \textbf{The paper covers the RalstonBuniy version of the Askaryan class, and the other two versions are for comparison.}  The EugeneHong version came from E. Hong (CCAAP post-doctoral fellow at Ohio State University), and is used in AraSim by the ARA collaboration (along with subsequent modifications).  The EugeneHong module takes the ARVZ model (e.g. Physical Review D \textbf{84} 103003, 2011) and uses the Gaisser-Hillas and Greisen cascade profiles to calculate Askaryan fields without having to simulate particle cascades.
 
-\section{A Simple Example}
+\section{The Class Definition}
 
 Change to the RalstonBuniy directory, and notice the class definition and the source file, along with a reference to the original Ralston and Buniy framework paper upon which our calculations were built.
 
@@ -39,18 +39,11 @@ $ ls
 Askaryan.cxx Askaryan.h global.h REFERENCE
 \end{verbatim}
 
-The complete Askaryan.h class should look like this:
+The Askaryan.h class is below.  It contains data and data containers, a custom constructor, get-methods, and set-methods.
 
 \begin{verbatim}
 #ifndef ASKARYAN_H_
 #define ASKARYAN_H_
-//Askaryan class
-//Author: Jordan C. Hanson
-//June 19th, 2018
-//Adapted from Ralston and Buniy (2001)
-
-//Variables defined for one interaction, (one angle and distance), 
-//but continuous frequency.
 
 #include <vector>
 #include <cmath>
@@ -58,9 +51,6 @@ The complete Askaryan.h class should look like this:
 #include "global.h"
 
 typedef std::complex<float> cf;
-
-int factorial(int);
-int dfactorial(int);
 
 class Askaryan {
 	protected:
@@ -116,6 +106,110 @@ class Askaryan {
 #endif
 \end{verbatim}
 
-\section{Class Listing}
+\subsection{Data and Data Containers}
+
+The following is a list of the units, function, and typical values of the data and data containers in the class.
+
+\begin{itemize}
+\item \begin{verbatim}
+_askaryanTheta
+\end{verbatim} This is the viewing angle $\theta$ in units of radians, with allowed values between $[0,\pi/2]$.  Typical values are close to the Cherenkov angle of $\theta_C = \cos^{-1}(1/n_{ice})$, where $n_{ice} = 1.78$.  Constants like $\theta_C$ and $n_{ice}$ are defined in global.h 
+\item \begin{verbatim}
+_askaryanFreq
+\end{verbatim}
+This is a pointer to a vector of floats corresponding to the frequencies at which the code will yield the Askaryan electric field.  \textbf{Note: if the electric field versus time is desired, the user must distribute the frequencies uniformly.}
+\item \begin{verbatim}
+_askaryanR
+\end{verbatim}
+This is the distance $R$ from the observer to the cascade maximum, as defined in the papers by J. Ralston and R. Buniy, and J.C. Hanson and A. Connolly.  \textbf{Note: the user may not assume that the field is evaluated in the far-field approximation.  Thus, scaling by $R$ to obtain the field at a different distance is not always valid.}
+\item \begin{verbatim}
+_askaryanDepthA
+\end{verbatim}
+This is the width of the particle cascade in meters, as defined by J. Ralston and R. Buniy.  It is not the distance of the cascade maximum to the primary interaction vertex.
+\item \begin{verbatim}
+_Nmax
+\end{verbatim}
+This is the number of excess negatively charged particles at cascade maximum, divided by 1000.  This definition comes from J. Ralston and R. Buniy.  This parameter is calculated from the Gaisser-Hillas or Greisen parameterizations once emShower or hadShower is executed.  The total number of charged particles is converted to excess negative charges by multiplying by the simulated charge excess fraction.  See the Appendix of the paper by J.C. Hanson and A. Connolly for details.
+\item \begin{verbatim}
+_E
+\end{verbatim}
+This is the total energy \textit{of the particle cascade}.  It plays a role in determining the strength of the LPM effect, among other functions.
+\item \begin{verbatim}
+_isEM, _isHad
+\end{verbatim}
+These are two boolean variables that are set when emShower or hadShower are called.  If emShower is called, then $\_isEM = true$, and hadShower sets $\_isHad = true$.  If the function lpmEffect is activated, the radiation is modified if $\_isEM = true$.
+\item \begin{verbatim}
+_rho0
+\end{verbatim}
+The ICD excess negative charge is distributed radially away from the shower axis like $\approx \exp(-\sqrt{2\pi}\rho_0 \rho)$.  While this notation appears strange, it makes the normalization for the cascade form factor trivial and intuitive.  Setting the variable $\_rho0$ is equivalent to setting $\rho_0$ in the equation.  The code leaves the choice of value for $(\sqrt{2\pi} \rho_0)^{-1}$ up to the user, however, this value is usually $\approx 1/20$ m.  See paper for detail.
+\item \begin{verbatim}
+_useFormFactor
+\end{verbatim}
+This is a boolean parameter that determines whether or not the form factor $\widetilde{F}(\omega,\theta)$ is applied to the observed field.  It is sometimes useful to examine the radiation without the form factor, and then apply it to see if the field is still observable.
+\item \begin{verbatim}
+_strictLowFreqLimit
+\end{verbatim}
+Usually this boolean parameter is set to false.  When the LPM effect is applied, there are different takes on how to ensure energy is conserved, given the delayed creation of many low energy particles.  Toggling this parameter changes the radiation strength between 1-100 MHz.
+\item \begin{verbatim}
+\end{verbatim}
+\end{itemize}
+
+\section{Class Member Functions}
+
+\begin{itemize}
+\item \begin{verbatim}
+Askaryan() : ...
+\end{verbatim}
+The constructor sets default values for many of the variables.  Notice that some of the values (at the moment) are defined in global.h.  For example $STANDARD_ASK_R$ is defined in global.h as 1000 meters, but the user might want to set that default value to some other value so that every cascade is observed at some other standard distance.
+\item \begin{verbatim}
+void toggleFormFactor()
+\end{verbatim}
+This function sets $\_useFormFactor$ to the value it currently does not hold.
+\item \begin{verbatim}
+void toggleLowFreqLimit
+\end{verbatim}
+This function is the same as the prior one, except for $\_strictLowFreqLimit$.
+\item Set functions.
+The set functions just set the parameter to the given data value or data container.  The most commonly used set function is
+\begin{verbatim}
+void setAskFreq(std::vector<float>*); \\GHz
+\end{verbatim}
+This function specifies the frequencies at which the code will evaluate the Askaryan field.  The units are GHz.  The other commonly used set function is 
+\begin{verbatim}
+void setFormScale(float)
+\end{verbatim}
+This function sets the variable $\rho_0$.
+\item Get functions.  The get functions just retrieve the relevant data or data containers.  For example,
+\begin{verbatim}
+float criticalF(); //GHz
+\end{verbatim}
+This function retrieves the critical frequency, or the highest frequency specified by the user in setAskFreq.  Remember, we specifiy the observable frequencies in this code primarily, so the critical frequency is not half of the maximum frequency provided by the user, nor is it $1/2\Delta t$.  The function
+\begin{verbatim}
+std::vector<float>* time(); //ns
+\end{verbatim}
+retrieves the time values that correspond to the critical frequency given by the user, starting with $t=0$.  The degrees of freedom are conserved.
+\item For the remaining get and set functions, simply read the source code.
+\item Electromagnetic and hadronic shower functions
+\begin{verbatim}
+void emShower(float); //Shower parameters from energy in GeV
+void hadShower(float); //Shower parameters from energy in GeV
+\end{verbatim}
+These two functions determine the values of $a$ and $N_{max}$, which in turn give the overall amplitude of the Askaryan radiation.  The overall amplitude is proportional to $N_{max} a$.  Naively, we may think of $N_{max}a$ as the area under the cascade profile curve.  The \textit{cascade energy}, not the total \textit{neutrino} energy, is to be the argument of these two functions.  The units are to be GeV.
+\item Field retrieval functions
+\begin{verbatim}
+std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
+std::vector<std::vector<float> >* E_t(); //V/m
+\end{verbatim}
+These two functions are to be called after emShower or hadShower.  They return data containers that contain the field versus either the frequency $\nu = \omega/2\pi$ (user-specified in $\_askaryanFreq$ in GHz), or the time $t$ in ns.  The paper by J.C. Hanson and A. Connolly discusses the use of retarded time, and how to interpret field causality given the electric field versus time.  Be careful retrieving the complex field versus time.  The field will exhibit pathologies if the frequency bins do not reflect the actual amplitude versus frequency of the field being specified by the input parameters.  For example, suppose the field is being viewed at the Cherenkov angle, and the form factor is minimal.  If the frequency bins are too wide, or if the critical frequency is too low, the field will exhibit aliasing effects.  One of the key features of this code is to keep track of the complex electric field, both the amplitude and phase of each component.
+\item The LPM scaling
+\begin{verbatim}
+void lpmEffect();
+\end{verbatim}
+This function will rescale the cascade width ``a'' ($\_askaryanDepthA$) according to the paper by J.C. Hanson and A. Connolly, if the cascade is electromagnetic ($\_isEM = true$).  Note that this also changes the phase of the electric field, not just the amplitude.
+\end{itemize}
+
+\section{Examples}
+
+What follows are a few examples of how to use the code effectively.
 
 \end{document}
