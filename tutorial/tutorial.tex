@@ -257,4 +257,59 @@ int main(int argc, char **argv)
 
 The code begins with initializing a vector of frequencies that is not evenly spaced.  This facilitates plotting on a logarithmic frequency scale.  The Askaryan object is declared, and the user selects a 3 cm cascade lateral width (the 0.03 number in the setFormScale call).  The frequencies are then set, followed by a call to the emShower function given the user's first argument.  Although the user has now set $N_{max}$ and $a$, this particular user wants to see what happens if this particular cascade does not follow the Greisen profile exactly, and sets a new value for $a$.  The observation distance $R$ is then set, followed by a user-defined viewing angle.  The electric field has three components: $E_r$, $E_\theta$, and $E_\phi$.  By symmetry, the third component should always be zero.  The largest component is almost always $E_\theta$.  Finally, the second component of $Eshow$ (which is $E_\theta$) is retrieved and printed to a file defined by the user.
 
+The next example plots the Askaryan field versus time.
+
+\begin{verbatim}
+#include "Askaryan.h"
+#include <cstdlib>
+#include <fstream>
+#include <ctime>
+#include <iostream>
+#include <complex>
+#include <algorithm>
+using namespace std;
+
+int main(int argc, char **argv)
+{
+	float df_ghz = 0.02; //GHz
+	float f_max = 4.0; //GHz
+	float f_min = 0.0; //GHz
+	float Energy = atof(argv[1]); //GeV
+	
+	Askaryan *h = new Askaryan();
+	vector<float> *freqs = new vector<float>;
+	for(float i=f_min;i<f_max;i+=df_ghz) freqs->push_back(i);
+	h->setAskFreq(freqs);
+	h->setAskTheta((THETA_C)*PI/180.0);
+	h->setFormScale(7.8);
+	h->emShower(1.0e9);
+	h->lpmEffect();
+	vector<vector<cf> > *Eshow = new vector<vector<cf> >;
+	vector<float> *t = new vector<float>;
+	vector<cf> e;
+	Eshow = h->E_t();
+	e = Eshow->at(1);
+	t = h->time();
+	ofstream out(argv[2]);
+	for(int j=0;j<e.size();++j) out<<t->at(j)<<" "<<real(e[j])<<endl;
+	out.close();
+    
+	delete h;
+	delete Eshow;
+	delete freqs;
+	return 0;
+}
+\end{verbatim}
+The code first defines a set of evenly-spaced frequency bins, declares an Askaryan object, and sets the frequencies, viewing angle, and form factor scale.  Next, the LPM effect is activated.  Because the shower is electromagnetic in type, the lpmEffect() function will change the $a$ value of the cascade.  Once the $\vec{E}(t)$ is produced by $E\_t()$, the real part versus time is read out.
+
+\section{Contact Information}
+
+Jordan C. Hanson \\
+Assistant Professor of Physics \\
+Whittier College \\
+jhanson2@whittier.edu \\
+918particle@gmail.com \\
+
+If you would like to be a developer of this code, or are interested in writing additional papers on the topic with me, please contact me, and clone the code on github.com.
+
 \end{document}
