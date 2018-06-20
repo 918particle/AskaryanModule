@@ -210,6 +210,51 @@ This function will rescale the cascade width ``a'' ($\_askaryanDepthA$) accordin
 
 \section{Examples}
 
-What follows are a few examples of how to use the code effectively.
+What follows are a few examples of how to use the code effectively.  Do not read this section until you have read the previous sections.  For example, suppose the user wants to calculate the Askaryan field versus frequency, for a given set of parameters.  Consider the code below:
+
+\begin{verbatim}
+#include "Askaryan.h"
+#include <cstdlib>
+#include <fstream>
+#include <ctime>
+#include <iostream>
+#include <complex>
+#include <cmath>
+using namespace std;
+
+int main(int argc, char **argv)
+{
+	char title[100];
+	vector<float> *freqs = new vector<float>;
+	float df = 0.75;
+	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e-3);
+	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e-2);
+	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e-1);
+	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e+0);
+	for(float f1 = 1.0; f1<10.0; f1=f1+df) freqs->push_back(f1*1e+1);
+	
+	Askaryan *h = new Askaryan();
+	h->setFormScale(1/(sqrt(2.0*3.14159)*0.03));
+	h->setAskFreq(freqs);
+	h->emShower(atof(argv[1]));
+	h->setAskDepthA(1.5);
+	h->setAskR(1000.0);
+	float theta = atof(argv[2]);
+	sprintf(title,"shower_%s.dat",argv[3]);
+	ofstream out(title);
+	h->setAskTheta(theta*PI/180.0);
+	vector<vector<cf> > *Eshow = new vector<vector<cf> >;
+	Eshow = h->E_omega();
+	vector<cf> eTheta = Eshow->at(1);
+	delete Eshow;
+	for(int j=0;j<eTheta.size();++j) out<<freqs->at(j)<<" "<<abs(eTheta[j])<<endl;
+	out.close();
+	delete h;
+	delete freqs;
+	return 0;
+}
+\end{verbatim}
+
+The code begins with initializing a vector of frequencies that is not evenly spaced.  This facilitates plotting on a logarithmic frequency scale.  The Askaryan object is declared, and the user selects a 3 cm cascade lateral width (the 0.03 number in the setFormScale call).  The frequencies are then set, followed by a call to the emShower function given the user's first argument.  Although the user has now set $N_{max}$ and $a$, this particular user wants to see what happens if this particular cascade does not follow the Greisen profile exactly, and sets a new value for $a$.  The observation distance $R$ is then set, followed by a user-defined viewing angle.  The electric field has three components: $E_r$, $E_\theta$, and $E_\phi$.  By symmetry, the third component should always be zero.  The largest component is almost always $E_\theta$.  Finally, the second component of $Eshow$ (which is $E_\theta$) is retrieved and printed to a file defined by the user.
 
 \end{document}
