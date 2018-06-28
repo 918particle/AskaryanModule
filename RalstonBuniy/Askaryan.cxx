@@ -359,3 +359,9 @@ float Askaryan::getAskEta(float nu){
 float Askaryan::getAskNmax(){
     return _Nmax;
 }
+
+void Askaryan::setIndex(float n){
+	INDEX = n;
+	COS_THETA_C = 1.0/n;
+	THETA_C
+}
