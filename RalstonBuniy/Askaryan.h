@@ -11,7 +11,6 @@
 #include <vector>
 #include <cmath>
 #include <complex>
-#include "global.h"
 
 typedef std::complex<float> cf;
 
