@@ -38,7 +38,7 @@ class Askaryan {
 					INDEX(1.78),
 					STANDARD_ASK_R(1000.0),
 					RADDEG(0.01745),
-					COS_THETA_C(0.561798){};
+					COS_THETA_C(0.561797753){};
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
 		void setAskR(float); //m

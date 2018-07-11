@@ -19,10 +19,10 @@ int main(int argc, char **argv){
 	Askaryan *h = new Askaryan();
 	h->setAskFreq(freqs);
 	h->setAskR(1000.0); // 1km
-	h->setAskE(1.0e3); //1 TeV
+	h->setAskE(atof(argv[1])); //Specified in GeV.
 	for(float theta=0.0;theta>=-10.0;theta-=2.5)
 	{
-		sprintf(title,"shower_%3.1f_%3.1f_zhs.dat",1000.0,theta);
+		sprintf(title,"shower_%3.1f_%3.1f_zhs.dat",atof(argv[1]),theta);
 		ofstream out(title);
 		h->setAskTheta((theta+55.82)*3.14159/180.0);
 		vector<vector<cf> > *Eshow = new vector<vector<cf> >;
@@ -30,7 +30,10 @@ int main(int argc, char **argv){
 		vector<cf> eTheta = Eshow->at(1);
 		delete Eshow;
 		//Units: R |E|/E_c (V/m/TeV)
-		for(unsigned int j=0;j<eTheta.size();++j) out<<freqs->at(j)<<" "<<abs(eTheta[j])*h->getAskR()/h->getAskE()*1000.0<<endl;
+		for(unsigned int j=0;j<eTheta.size();++j)
+		{
+			out<<freqs->at(j)<<" "<<abs(eTheta[j])*h->getAskR()/h->getAskE()*1000.0<<endl;
+		}
 		out.close();
 	}
 	delete h;

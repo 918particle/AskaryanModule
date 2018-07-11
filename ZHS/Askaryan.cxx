@@ -43,7 +43,10 @@ std::vector<std::vector<cf> >* Askaryan::E_omega()
 		float theta = _askaryanTheta*180.0/PI;
 		float theta_c = acos(COS_THETA_C)*180.0/PI;
 		float angular_factor = exp(-0.5*(theta-theta_c)/delta_theta*(theta-theta_c)/delta_theta);
-		cf result(0.0,zhs_1992_eq_20*angular_factor); //assumes 90 degree phase
+		float phase = PI/2.0*exp(-1.0*(*f)/4.0);
+		float real_part = zhs_1992_eq_20*angular_factor*cos(phase);
+		float imaginary_part = zhs_1992_eq_20*angular_factor*sin(phase);
+		cf result(real_part,imaginary_part); //assumes 90 degree phase
 		thetaComp->push_back(result);
 	}
 	result->push_back(*rComp);
