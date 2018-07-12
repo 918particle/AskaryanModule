@@ -154,7 +154,7 @@ Usually this boolean parameter is set to false.  When the LPM effect is applied,
 \end{verbatim}
 \end{itemize}
 
-\section{Class Member Functions}
+\subsection{Class Member Functions}
 
 \begin{itemize}
 \item \begin{verbatim}
@@ -210,7 +210,11 @@ This function will rescale the cascade width ``a'' ($\_askaryanDepthA$) accordin
 
 \section{Examples}
 
-What follows are a few examples of how to use the code effectively.  Do not read this section until you have read the previous sections.  For example, suppose the user wants to calculate the Askaryan field versus frequency, for a given set of parameters.  Consider the code below:
+What follows are a few examples of how to use the code effectively.  Do not read this section until you have read the previous sections.
+
+\subsection{Askaryan Field versus Frequency}
+
+For example, suppose the user wants to calculate the Askaryan field versus frequency, for a given set of parameters.  Consider the code below:
 
 \begin{verbatim}
 #include "Askaryan.h"
@@ -301,6 +305,26 @@ int main(int argc, char **argv)
 }
 \end{verbatim}
 The code first defines a set of evenly-spaced frequency bins, declares an Askaryan object, and sets the frequencies, viewing angle, and form factor scale.  Next, the LPM effect is activated.  Because the shower is electromagnetic in type, the lpmEffect() function will change the $a$ value of the cascade.  Once the $\vec{E}(t)$ is produced by $E\_t()$, the real part versus time is read out.
+
+\subsection{Normalization Check}
+
+\textit{Requirements:} GnuPlot, and the image viewer Evince (Linux).  If the code is being pulled from Github, the example script \textit{execute} can be run to check the normalizations of the electric field.  Copy the \textit{execute} and \textit{sample\_plot} scripts from the tutorial directory into the main directory.  The script is below:
+
+\begin{verbatim}
+cd RalstonBuniy
+g++ createAsk.cpp -o createAsk Askaryan.cxx -lfftw3 -lm
+./createAsk $1
+cd ../ZHS
+g++ createAsk.cpp -o createAsk Askaryan.cxx -lfftw3 -lm
+./createAsk $1
+cd ..
+gnuplot -c sample_plot.plt $1
+evince July10_plot1.eps &
+rm ZHS/shower*.dat
+rm RalstonBuniy/shower*.dat
+\end{verbatim}
+
+Copying this script into the main repository directory and running it will begin the following process.  First, the current directory is changed to RalstonBuniy, and the code \textit{createAsk} is compiled.  It is then executed, and the argument to the script is an energy in GeV for which the Askaryan equations will be evaluated.  The process is repeated for the ZHS version of \textit{createAsk}.  The current directory is changed to the base repository directory and a gnuplot script is executed with the same argument as \textit{createAsk}.  It is important to have this and the execute.sh script in the main directory, even though they are stored in the tutorial directory.  The plots should show that the ZHS and JCH+AC models (based on Ralston and Buniy) agree in the overall normalization.  Finally, the image file is viewed and the data files produced by the code are cleaned up.
 
 \section{Contact Information}
 
