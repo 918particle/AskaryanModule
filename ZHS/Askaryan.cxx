@@ -61,16 +61,16 @@ float Askaryan::criticalF()
 }
 
 std::vector<std::vector<float> >* Askaryan::E_t(){
-    std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
+	std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
 	e = E_omega();
 	std::vector<cf> e_r = e->at(0);
 	std::vector<cf> e_theta = e->at(1);
 	std::vector<cf> e_phi = e->at(2);
-    delete e;
+	delete e;
 	float df = criticalF()/(float(e_r.size()));
 	df*=1000.0; //now in MHz.
 	int n = e_r.size()*2;
-    fftw_complex *in1,*in2,*in3,*out1,*out2,*out3;
+	fftw_complex *in1,*in2,*in3,*out1,*out2,*out3;
 	in1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
 	in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
 	in3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
@@ -127,15 +127,14 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 		Etheta_t.push_back(out2[i][0]*df);
 		Ephi_t.push_back(out3[i][0]*df);
 	}
-    //Note: The choice of sign in the Fourier transform convention should not determine physical
-    //properties of the output.  The following code ensures the correct physical timing, according
-    //to the RB paper, and that the either choice of convention produces the same answer.
-    if(FFTW_CHOICE=="FFTW_BACKWARD")
-    {
+	//Note: The choice of sign in the Fourier transform convention should not determine physical
+	//properties of the output.  The following code ensures the correct physical timing, according
+	//to the RB paper, and that the either choice of convention produces the same answer.
+	if(FFTW_CHOICE=="FFTW_BACKWARD"){
 		std::reverse(Er_t.begin(),Er_t.end());
 		std::reverse(Etheta_t.begin(),Etheta_t.end());
 		std::reverse(Ephi_t.begin(),Ephi_t.end());
-    }
+	}
 	result->push_back(Er_t);
 	result->push_back(Etheta_t);
 	result->push_back(Ephi_t);
