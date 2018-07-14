@@ -2,8 +2,8 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
-//test
-std::vector<std::vector<float> >* Askaryan::showerProfile(float E_shower,int shower_mode,float shower_step_m){
+
+void Askaryan::showerProfile(float E_shower,int shower_mode,float shower_step_m){
     std::vector<float> *depth = new std::vector<float>; depth->clear();
     std::vector<float> *Q_shower = new std::vector<float>; Q_shower->clear();
     std::vector<float> *LQ = new std::vector<float>; LQ->clear();
@@ -64,7 +64,7 @@ std::vector<std::vector<float> >* Askaryan::showerProfile(float E_shower,int sho
     delete depth;
     delete Q_shower;
     delete LQ;
-    return outputs;
+    _cascade = outputs;
 }
 
 float Askaryan::Greisen(float x_in, float *par){
@@ -111,7 +111,8 @@ std::vector<float>* Askaryan::GetVm_FarField_Tarray(std::pair<float,float> *frac
     else {
         E_shower = _E*fracs->second;
     }
-    std::vector<std::vector<float> >* interm = this->showerProfile(E_shower,_shower_mode,shower_step_m);
+    this->showerProfile(E_shower,_shower_mode,shower_step_m);
+    std::vector<std::vector<float> >* interm = _cascade;
     std::vector<float> depth = interm->at(0);
     std::vector<float> Q_shower = interm->at(1);
     std::vector<float> LQ = interm->at(2);

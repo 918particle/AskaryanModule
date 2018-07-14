@@ -14,28 +14,49 @@
 #include <vector>
 #include <cmath>
 #include <utility>
-#include "global.h"
+#include <string>
 
 class Askaryan {
-protected:
-    float _askaryanTheta; //viewing angle in radians
-    std::vector<float>* _askaryanTimes; //ns, with retarded time of zero corresponding to on-cone peak
-    float _askaryanR; //meters
-    float _E; //energy in GeV
-    int _shower_mode; //electromagnetic or hadronic
-public:
-    std::vector<std::vector<float> >* showerProfile(float,int,float);
-    std::vector<float>* GetVm_FarField_Tarray(std::pair<float,float>*,float);
-    float Param_RE_Tterm_approx(float,float*); //Electric field form factors from ARVZ (1D).
-    float Greisen(float,float*); //Electromagnetic shower profile
-    float GaisserHillas(float,float*); //Hadronic shower profile
-    void emShower(float); //Energy in GeV
-    void hadShower(float); //Energy in GeV
-    void setAskE(float); //GeV
-    void setShowerMode(int); //0 = electromagnetic, 1 = hadronic
-    void setAskR(float); //m
-    void standardInitialize();
-    void setAskTheta(float);
-    void setAskTimes(std::vector<float>*);
+	protected:
+		float _askaryanTheta; //viewing angle in radians
+		std::vector<float>* _askaryanTimes; //ns, with retarded time of zero corresponding to on-cone peak
+		float _askaryanR; //meters
+		float _E; //energy in GeV
+		int _shower_mode; //electromagnetic or hadronic
+		std::vector<std::vector<float> >* _cascade; //output of showerProfile.
+	private:
+		std::string FFTW_CHOICE;
+		float PI;
+		float LIGHT_SPEED;
+		float COS_THETA_C;
+		float THETA_C;
+		float INDEX;
+		float ICE_DENSITY;
+		float ICE_RAD_LENGTH;
+		float STANDARD_ASK_R;
+	public:
+		Askaryan() : 
+			FFTW_CHOICE("FFTW_FORWARD"),
+			PI(3.14159),
+			LIGHT_SPEED(0.3),
+			COS_THETA_C(0.561798),
+			THETA_C(55.82),
+			INDEX(1.78),
+			ICE_DENSITY(0.9167),
+			ICE_RAD_LENGTH(36.08),
+			STANDARD_ASK_R(1000.0){};
+		void showerProfile(float,int,float);
+		float Param_RE_Tterm_approx(float,float*); //Electric field form factors from ARVZ (1D).
+		float Greisen(float,float*); //Electromagnetic shower profile
+		float GaisserHillas(float,float*); //Hadronic shower profile
+		void emShower(float); //Energy in GeV
+		void hadShower(float); //Energy in GeV
+		void setAskE(float); //GeV
+		void setShowerMode(int); //0 = electromagnetic, 1 = hadronic
+		void setAskR(float); //m
+		void standardInitialize();
+		void setAskTheta(float);
+		void setAskTimes(std::vector<float>*);
+		std::vector<float>* GetVm_FarField_Tarray(std::pair<float,float>*,float);
 };
 #endif

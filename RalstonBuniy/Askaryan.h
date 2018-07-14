@@ -54,7 +54,7 @@ class Askaryan {
 					_Nmax(STANDARD_ASK_NMAX),
 					_askaryanTheta(55.82*PI/180.0),
 					_strictLowFreqLimit(false),
-					FFTW_CHOICE("FFTW_BACKWARD"),
+					FFTW_CHOICE("FFTW_FORWARD"),
 					PI(3.14159),
 					LIGHT_SPEED(0.29972),
 					PSF(1.0),
