@@ -130,11 +130,11 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 	//Note: The choice of sign in the Fourier transform convention should not determine physical
 	//properties of the output.  The following code ensures the correct physical timing, according
 	//to the RB paper, and that the either choice of convention produces the same answer.
-	if(FFTW_CHOICE=="FFTW_BACKWARD"){
-		std::reverse(Er_t.begin(),Er_t.end());
-		std::reverse(Etheta_t.begin(),Etheta_t.end());
-		std::reverse(Ephi_t.begin(),Ephi_t.end());
-	}
+	// if(FFTW_CHOICE=="FFTW_BACKWARD"){
+	// 	std::reverse(Er_t.begin(),Er_t.end());
+	// 	std::reverse(Etheta_t.begin(),Etheta_t.end());
+	// 	std::reverse(Ephi_t.begin(),Ephi_t.end());
+	// }
 	result->push_back(Er_t);
 	result->push_back(Etheta_t);
 	result->push_back(Ephi_t);

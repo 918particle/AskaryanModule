@@ -16,7 +16,7 @@ set rmargin 5
 set bmargin 5
 set tmargin 3
 set terminal postscript color enhanced
-set output "July10_plot1.eps"
+set output "July18_plot1.eps"
 
 file1 = sprintf("ZHS/shower_%s_0.0_zhs.dat",ARG1)
 file2 = sprintf("RalstonBuniy/shower_%s_0.0_JCAC.dat",ARG1)
