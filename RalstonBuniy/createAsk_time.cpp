@@ -24,7 +24,7 @@ int main(int argc, char **argv){
 	h->setAskE(atof(argv[1])); //Specified in GeV.
 	h->emShower(atof(argv[1])); //Specified in GeV.
 	h->lpmEffect();
-	for(float theta=0.0;theta>=-10.0;theta-=2.5)
+	for(float theta=0.0;theta>=-10.0;theta-=0.25)
 	{
 		h->setAskTheta((theta+55.82)*3.14159/180.0);
 		sprintf(title,"shower_%3.1f_%3.1f_JCAC_t.dat",atof(argv[1]),theta);
