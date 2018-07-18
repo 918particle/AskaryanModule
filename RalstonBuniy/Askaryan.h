@@ -64,7 +64,7 @@ class Askaryan {
 					STANDARD_ASK_DEPTH(5.0),
 					STANDARD_ASK_R(1000.0),
 					STANDARD_ASK_NMAX(1000),
-					NORM(0.4),
+					NORM(1.0),
 					RADDEG(0.01745),
 					COS_THETA_C(0.561798){};
 		void toggleFormFactor(); //What it sounds like: use or don't use form factor.
