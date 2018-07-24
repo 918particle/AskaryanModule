@@ -33,6 +33,8 @@ class Askaryan {
 		float STANDARD_ASK_R;
 		float RADDEG;
 		float COS_THETA_C;
+		float ICE_RAD_LENGTH;
+		float ICE_DENSITY;
 	public:
         Askaryan(): _askaryanTheta(55.82*PI/180.0),
 					_askaryanR(1000.0),
@@ -45,7 +47,9 @@ class Askaryan {
 					INDEX(1.78),
 					STANDARD_ASK_R(1000.0),
 					RADDEG(0.01745),
-					COS_THETA_C(0.561797753){};
+					COS_THETA_C(0.561797753),
+					ICE_RAD_LENGTH(36.08),
+					ICE_DENSITY(0.9167){};
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
 		void setAskTimes(std::vector<float>*); //ns
@@ -55,8 +59,8 @@ class Askaryan {
 		float getAskE(); //GeV
 		float getAskR(); //meters
 		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
-		std::vector<std::vector<float> >* E_t(); //V/m
-		float E_t_thetaC(float); //V/m
+		float A_t(float); //V/m
+		float FormFactor(float); //V/m
 		std::vector<float>* time(); //ns
 		void setIndex(float);
 		void SetEmHad(bool,bool); //Set EM and HAD.
