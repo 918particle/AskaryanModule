@@ -58,13 +58,14 @@ class Askaryan {
 		float criticalF(); //GHz
 		float getAskE(); //GeV
 		float getAskR(); //meters
-		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
-		float A_t(float); //V/m
-		float FormFactor(float); //V/m
+		float A_t(float); //V s/m
+		float FormFactor(float); //s^(-1)
 		std::vector<float>* time(); //ns
 		void setIndex(float);
 		void SetEmHad(bool,bool); //Set EM and HAD.
 		void emShower();
 		void hadShower();
+		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
+		std::vector<std::vector<float> >* E_t(); //V/m
 };
 #endif

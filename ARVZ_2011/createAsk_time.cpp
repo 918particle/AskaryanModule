@@ -9,15 +9,27 @@
 using namespace std;
 
 int main(int argc, char **argv){
+	float dt = 0.1;
+	int t_min = -400;
+	int t_max = 400;
 	char title[100];
 	Askaryan *h = new Askaryan();
 	h->setAskR(1000.0); // meters
 	h->setAskE(atof(argv[1])); //Specified in GeV.
-	h->setAskTheta((-7.1+55.82)*3.14159/180.0);
+	h->setAskTheta((atof(argv[2])+55.82)*3.14159/180.0);
 	h->SetEmHad(false,true);
-	for(int i=-200;i<200;++i)
+	vector<float> *times = new vector<float>;
+	for(int i=t_min;i<t_max;++i)
 	{
-		float t = i*0.01;
-		cout<<t<<" "<<h->getAskR()*abs(h->A_t(t))*100.0<<endl;
+		times->push_back(i*dt);
+	}
+	h->setAskTimes(times);
+	vector<vector<float> > *E = new vector<vector<float> >;
+	E = h->E_t();
+	vector<float> eTheta = E->at(1);
+	delete E;
+	for(int i=0;i<eTheta.size();++i)
+	{
+		cout<<times->at(i)<<" "<<h->getAskR()*eTheta[i]<<endl;
 	}
 }

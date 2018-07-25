@@ -79,7 +79,7 @@ float Askaryan::A_t(float t)
 			float b = x;
 			float c = 1.5*x;
 			float d = log((3*x)/(x+2*log(_E/E_CRIT)));
-			float t_prime = t-x*ICE_RAD_LENGTH/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*COS_THETA_C/LIGHT_SPEED);
+			float t_prime = t-x*ICE_RAD_LENGTH/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED);
 			nx->push_back(a*exp(b-c*d)*this->FormFactor(t_prime));
 		}
 		float excess=0.25;
@@ -103,7 +103,7 @@ float Askaryan::A_t(float t)
 			float a = S0*_E/Ec*(Xmax-lambda)/Xmax*exp(Xmax/lambda-1);
 			float b = pow(x/(Xmax-lambda),Xmax/lambda);
 			float c = exp(-x/lambda);
-			float t_prime = t-x*ICE_RAD_LENGTH/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*COS_THETA_C/LIGHT_SPEED);
+			float t_prime = t-x/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED);
 			nx->push_back(a*b*c*this->FormFactor(t_prime));
 		}
 		result = C*dx/ICE_DENSITY*excess*std::accumulate(nx->begin(),nx->end(),0.0);
@@ -113,6 +113,31 @@ float Askaryan::A_t(float t)
 	{
 		result = -3.14159; //Do something more intelligent here.
 	}
+	return result;
+}
+
+std::vector<std::vector<float> >* Askaryan::E_t()
+{
+	std::vector<float> *eTheta = new std::vector<float>;
+	std::vector<float> *ePhi = new std::vector<float>;
+	std::vector<float> *eR = new std::vector<float>;
+	eTheta->clear();
+	std::vector<float>::iterator i;
+	std::vector<float>::iterator j;
+	for(i=this->time()->begin(),j=this->time()->begin()+1;i!=this->time()->end(),j!=this->time()->end();++i,++j)
+	{
+		//Two-point derivative for E(t) from A(t)
+		eTheta->push_back(-1.0*(this->A_t(*j)-this->A_t(*i))/((*j)-(*i))*1.0e9); //Units: V/m
+		ePhi->push_back(0.0);
+		eR->push_back(0.0);
+	}
+	std::vector<std::vector<float> > *result = new std::vector<std::vector<float> >;
+	result->push_back(*eR);
+	result->push_back(*eTheta);
+	result->push_back(*ePhi);
+	delete eR;
+	delete eTheta;
+	delete ePhi;
 	return result;
 }
 
