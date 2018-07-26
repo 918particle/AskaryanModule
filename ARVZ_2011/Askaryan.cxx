@@ -10,7 +10,7 @@ void Askaryan::setAskTheta(float x){
 	_askaryanTheta = x;
 }
 
-void Askaryan::setAskFreq(std::vector<float> *x){
+void Askaryan::setAskFreq(std::vector<float>* x){
 	_askaryanFreq = x;
 }
 
@@ -38,7 +38,68 @@ float Askaryan::getAskE(){
     return _E;
 }
 
-std::vector<std::vector<cf> >* Askaryan::E_omega(){}
+std::vector<std::vector<cf> >* Askaryan::E_omega()
+{
+	std::vector<std::vector<float> > *e = new std::vector<std::vector<float> >;
+	e = E_t();
+	std::vector<float> e_r = e->at(0);
+	std::vector<float> e_theta = e->at(1);
+	std::vector<float> e_phi = e->at(2);
+	delete e;
+	float dt = (this->time()->at(1)-this->time()->at(0))/1000.0; //microseconds
+	int n = e_r.size();
+	fftw_complex *in1,*in2,*in3,*out1,*out2,*out3;
+	in1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	in3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	fftw_plan p1,p2,p3;
+	if(FFTW_CHOICE=="FFTW_BACKWARD")
+	{
+		p1 = fftw_plan_dft_1d(n,in1,out1,1,FFTW_ESTIMATE);
+		p2 = fftw_plan_dft_1d(n,in2,out2,1,FFTW_ESTIMATE);
+		p3 = fftw_plan_dft_1d(n,in3,out3,1,FFTW_ESTIMATE);
+	}
+	else
+	{
+		p1 = fftw_plan_dft_1d(n,in1,out1,-1,FFTW_ESTIMATE);
+		p2 = fftw_plan_dft_1d(n,in2,out2,-1,FFTW_ESTIMATE);
+		p3 = fftw_plan_dft_1d(n,in3,out3,-1,FFTW_ESTIMATE);
+	}
+	//Proper assignment to input transforms
+	for(int i=0;i<n;++i)
+	{
+		in1[i][0] = e_r[i];
+		in2[i][0] = e_theta[i];
+		in3[i][0] = e_phi[i];
+		in1[i][1] = 0.0;
+		in2[i][1] = 0.0;
+		in3[i][1] = 0.0;
+	}
+	fftw_execute(p1);
+	fftw_execute(p2);
+	fftw_execute(p3);
+	std::vector<std::vector<cf> > *result = new std::vector<std::vector<cf> >;
+	std::vector<cf> Er;
+	std::vector<cf> Etheta;
+	std::vector<cf> Ephi;
+	for(int i=0;i<n/2;++i)
+	{
+		//Output the complex FFT.  It has been verified that the imaginary
+		//part is zero, meaning all the power is present in Re{E(t)}.
+		//We must multiply the result by dt in microseconds, so the units
+		//are V/m/MHz.
+		Er.push_back(cf(out1[i][0]*dt*NORM,out1[i][1]*dt*NORM));
+		Etheta.push_back(cf(out2[i][0]*dt*NORM,out2[i][1]*dt*NORM));
+		Ephi.push_back(cf(out3[i][0]*dt*NORM,out3[i][1]*dt*NORM));
+	}
+	result->push_back(Er);
+	result->push_back(Etheta);
+	result->push_back(Ephi);
+	return result;
+}
 
 float Askaryan::criticalF()
 {
@@ -79,7 +140,7 @@ float Askaryan::A_t(float t)
 			float b = x;
 			float c = 1.5*x;
 			float d = log((3*x)/(x+2*log(_E/E_CRIT)));
-			float t_prime = t-x*ICE_RAD_LENGTH/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED);
+			float t_prime = t-x*ICE_RAD_LENGTH/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED)*PSF;
 			nx->push_back(a*exp(b-c*d)*this->FormFactor(t_prime));
 		}
 		float excess=0.25;
@@ -103,7 +164,7 @@ float Askaryan::A_t(float t)
 			float a = S0*_E/Ec*(Xmax-lambda)/Xmax*exp(Xmax/lambda-1);
 			float b = pow(x/(Xmax-lambda),Xmax/lambda);
 			float c = exp(-x/lambda);
-			float t_prime = t-x/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED);
+			float t_prime = t-x/ICE_DENSITY*(1.0/LIGHT_SPEED-INDEX*cos(_askaryanTheta)/LIGHT_SPEED)*PSF;
 			nx->push_back(a*b*c*this->FormFactor(t_prime));
 		}
 		result = C*dx/ICE_DENSITY*excess*std::accumulate(nx->begin(),nx->end(),0.0);
@@ -165,6 +226,11 @@ void Askaryan::SetEmHad(bool em,bool had)
 void Askaryan::setAskTimes(std::vector<float>* t)
 {
 	_times = t;
+}
+
+std::vector<float>* Askaryan::getAskFreq()
+{
+	return _askaryanFreq;
 }
 
 void Askaryan::emShower()

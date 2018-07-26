@@ -10,14 +10,14 @@ using namespace std;
 
 int main(int argc, char **argv){
 	float dt = 0.1;
-	int t_min = -400;
-	int t_max = 400;
+	int t_min = -300;
+	int t_max = 300;
 	char title[100];
 	Askaryan *h = new Askaryan();
 	h->setAskR(1000.0); // meters
 	h->setAskE(atof(argv[1])); //Specified in GeV.
 	h->setAskTheta((atof(argv[2])+55.82)*3.14159/180.0);
-	h->SetEmHad(false,true);
+	h->SetEmHad(true,false);
 	vector<float> *times = new vector<float>;
 	for(int i=t_min;i<t_max;++i)
 	{

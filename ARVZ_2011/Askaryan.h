@@ -35,13 +35,15 @@ class Askaryan {
 		float COS_THETA_C;
 		float ICE_RAD_LENGTH;
 		float ICE_DENSITY;
+		float PSF;
+		float NORM;
 	public:
         Askaryan(): _askaryanTheta(55.82*PI/180.0),
 					_askaryanR(1000.0),
 					_E(1.0e3),
 					_EM(true),
 					_HAD(false),
-					FFTW_CHOICE("FFTW_BACKWARD"),
+					FFTW_CHOICE("FFTW_FORWARD"),
 					PI(3.14159),
 					LIGHT_SPEED(0.29972),
 					INDEX(1.78),
@@ -49,9 +51,12 @@ class Askaryan {
 					RADDEG(0.01745),
 					COS_THETA_C(0.561797753),
 					ICE_RAD_LENGTH(36.08),
-					ICE_DENSITY(0.9167){};
+					ICE_DENSITY(0.9167),
+					PSF(0.02),
+					NORM(1.5){};
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
+		std::vector<float>* getAskFreq(); //GHz
 		void setAskTimes(std::vector<float>*); //ns
 		void setAskR(float); //m
 		void setAskE(float); //GeV
