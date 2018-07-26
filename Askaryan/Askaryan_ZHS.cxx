@@ -1,31 +1,30 @@
-//Askaryan.cpp
-
 #include "Askaryan.h"
+#include "Askaryan_ZHS.h"
 #include <fftw3.h>
 #include <algorithm>
 #include <iostream>
 
-void Askaryan::setAskTheta(float x){
+void Askaryan_ZHS::setAskTheta(float x){
 	_askaryanTheta = x;
 }
 
-void Askaryan::setAskFreq(std::vector<float> *x){
+void Askaryan_ZHS::setAskFreq(std::vector<float> *x){
 	_askaryanFreq = x;
 }
 
-void Askaryan::setAskR(float x){
+void Askaryan_ZHS::setAskR(float x){
 	_askaryanR = x;
 }
 
-void Askaryan::setAskE(float x){
+void Askaryan_ZHS::setAskE(float x){
 	_E = x;
 }
 
-float Askaryan::getAskE(){
+float Askaryan_ZHS::getAskE(){
     return _E;
 }
 
-std::vector<std::vector<cf> >* Askaryan::E_omega()
+std::vector<std::vector<cf> >* Askaryan_ZHS::E_omega()
 {
     std::vector<cf> *rComp = new std::vector<cf>;
 	std::vector<cf> *thetaComp = new std::vector<cf>;
@@ -55,12 +54,12 @@ std::vector<std::vector<cf> >* Askaryan::E_omega()
 	return result;
 }
 
-float Askaryan::criticalF()
+float Askaryan_ZHS::criticalF()
 {
 		return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
 }
 
-std::vector<std::vector<float> >* Askaryan::E_t(){
+std::vector<std::vector<float> >* Askaryan_ZHS::E_t(){
 	std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
 	e = E_omega();
 	std::vector<cf> e_r = e->at(0);
@@ -141,7 +140,7 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 	return result;
 }
 
-std::vector<float>* Askaryan::time()
+std::vector<float>* Askaryan_ZHS::time()
 {
 	float fc = criticalF();
 	float dt = 1.0/(2.0*fc);
@@ -151,11 +150,11 @@ std::vector<float>* Askaryan::time()
 	return result;
 }
 
-float Askaryan::getAskR(){
+float Askaryan_ZHS::getAskR(){
     return _askaryanR;
 }
 
-void Askaryan::setIndex(float n){
+void Askaryan_ZHS::setIndex(float n){
 	INDEX = n;
 	COS_THETA_C = 1.0/n;
 }
