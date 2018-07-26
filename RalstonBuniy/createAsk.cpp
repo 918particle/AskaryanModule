@@ -31,7 +31,7 @@ int main(int argc, char **argv){
 		Eshow = h->E_omega();
 		vector<cf> eTheta = Eshow->at(1);
 		delete Eshow;
-		//Units: R |E|/E_c (V/m/TeV)
+		//Units: R |E|/E_c (V/MHz/TeV)
 		for(unsigned int j=0;j<eTheta.size();++j)
 		{
 			out<<freqs->at(j)<<" "<<abs(eTheta[j])*h->getAskR()/h->getAskE()*1000.0<<endl;

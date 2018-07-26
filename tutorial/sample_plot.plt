@@ -1,14 +1,15 @@
 set grid
-set title "{/Symbol r}_{0} value: 10.0 m^{-1}, Natural a-depth" font "Courier,18"
-set key box on top left font "Courier,16" height 0.1 width 1.25
+#set title "{/Symbol r}_{0} value: 10.0 m^{-1}, Natural a-depth" font "Courier,18"
+set key box on top left font "Courier,20" height 0.1 width 1.25
 set xrange [1e-3:10]
 set yrange [1e-11:1e-5]
-set xlabel "Frequency (GHz)" font "Courier,20" offset 0,-0.75
-set ylabel "R E/E_{C} (V/m/TeV)" font "Courier,20" offset -5,0
+set xlabel "Frequency (GHz)" font "Courier,24" offset 0,-0.75
+set ylabel "R E/E_{C} (V/MHz/TeV)" font "Courier,24" offset -5,0
 set logscale x
 set logscale y
-set xtics font "Courier,18"
-set ytics font "Courier,18"
+set xtics font "Courier,24"
+set ytics font "Courier,24"
+set pointsize 1.5
 set format y "10^{%01T}";
 set format x "10^{%01T}";
 set lmargin 15
@@ -40,20 +41,25 @@ file15 = sprintf("ARVZ_2011/shower_%s_-10.0_ARVZ.dat",ARG1)
 
 plot file1 w lp pt 2 lc rgb "#444444" title "ZHS (1992) Fig. 15", \
 	file2 w lp pt 6 lc rgb "#FF0000" title "JCH and AC (2017) Fig. 5", \
-	file3 w lp pt 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17"
+	file3 w l lw 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17", \
+	"paper.dat" using ($1/1000.0):($2/1.0e12) w p pt 7 lc -1 title "ARVZ (2011) Fig. 3, -0.3 deg"
 
 plot file4 w lp pt 2 lc rgb "#444444" title "ZHS (1992) Fig. 15, -2.5 deg", \
 	file5 w lp pt 6 lc rgb "#FF0000" title "JCH and AC (2017) Fig. 5, -2.5 deg", \
-	file6 w lp pt 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -2.5 deg"
+	file6 w l lw 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -2.5 deg", \
+	"paper.dat" using ($1/1000.0):($2/1.0e12) w p pt 7 lc -1 title "ARVZ (2011) Fig. 3, -0.3 deg"
 
 plot file7 w lp pt 2 lc rgb "#444444" title "ZHS (1992) Fig. 15, -5.0 deg", \
 	file8 w lp pt 6 lc rgb "#FF0000" title "JCH and AC (2017) Fig. 5, -5.0 deg",\
-	file9 w lp pt 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -5.0 deg"
+	file9 w l lw 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -5.0 deg", \
+	"paper.dat" using ($1/1000.0):($2/1.0e12) w p pt 7 lc -1 title "ARVZ (2011) Fig. 3, -0.3 deg"
 
 plot file10 w lp pt 2 lc rgb "#444444" title "ZHS (1992) Fig. 15, -7.5 deg", \
 	file11 w lp pt 6 lc rgb "#FF0000" title "JCH and AC (2017) Fig. 5, -7.5 deg",\
-	file12 w lp pt 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -7.5 deg"
+	file12 w l lw 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -7.5 deg", \
+	"paper.dat" using ($1/1000.0):($2/1.0e12) w p pt 7 lc -1 title "ARVZ (2011) Fig. 3, -0.3 deg"
 
 plot file13 w lp pt 2 lc rgb "#444444" title "ZHS (1992) Fig. 15, -10.0 deg", \
 	file14 w lp pt 6 lc rgb "#FF0000" title "JCH and AC (2017) Fig. 5, -10.0 deg",\
-	file15 w lp pt 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -10.0 deg"
+	file15 w l lw 6 lc rgb "#0000FF" title "ARVZ (2011) Eq. 17, -10.0 deg", \
+	"paper.dat" using ($1/1000.0):($2/1.0e12) w p pt 7 lc -1 title "ARVZ (2011) Fig. 3, -0.3 deg"

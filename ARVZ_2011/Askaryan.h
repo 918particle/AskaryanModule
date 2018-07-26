@@ -53,7 +53,7 @@ class Askaryan {
 					ICE_RAD_LENGTH(36.08),
 					ICE_DENSITY(0.9167),
 					PSF(0.02),
-					NORM(1.5){};
+					NORM(4.0){};
 		void setAskTheta(float); //radians
 		void setAskFreq(std::vector<float>*); //GHz
 		std::vector<float>* getAskFreq(); //GHz

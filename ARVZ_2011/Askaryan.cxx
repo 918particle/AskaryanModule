@@ -6,19 +6,23 @@
 #include <iostream>
 #include <numeric>
 
-void Askaryan::setAskTheta(float x){
+void Askaryan::setAskTheta(float x)
+{
 	_askaryanTheta = x;
 }
 
-void Askaryan::setAskFreq(std::vector<float>* x){
+void Askaryan::setAskFreq(std::vector<float>* x)
+{
 	_askaryanFreq = x;
 }
 
-void Askaryan::setAskR(float x){
+void Askaryan::setAskR(float x)
+{
 	_askaryanR = x;
 }
 
-void Askaryan::setAskE(float x){
+void Askaryan::setAskE(float x)
+{
 	_E = x;
 	if(_EM)
 	{
@@ -132,7 +136,7 @@ float Askaryan::A_t(float t)
 		//Greisen EM shower profile from Energy E in GeV.
 		std::vector<float> *nx = new std::vector<float>;
 		float max_x = 50.0; //maximum number of radiation lengths
-		float dx = 0.01; //small enough bin in depth for our purposes.
+		float dx = 0.02; //small enough bin in depth for our purposes.
 		float x_start = dx; //starting radiation length
 		for(float x=x_start;x<max_x;x+=dx)
 		{
@@ -188,7 +192,7 @@ std::vector<std::vector<float> >* Askaryan::E_t()
 	for(i=this->time()->begin(),j=this->time()->begin()+1;i!=this->time()->end(),j!=this->time()->end();++i,++j)
 	{
 		//Two-point derivative for E(t) from A(t)
-		eTheta->push_back(-1.0*(this->A_t(*j)-this->A_t(*i))/((*j)-(*i))*1.0e9); //Units: V/m
+		eTheta->push_back(-1.0*(this->A_t(*j)-this->A_t(*i))/((*j)-(*i))*1.0e9*0.5); //Units: V/m...note the factor of 2
 		ePhi->push_back(0.0);
 		eR->push_back(0.0);
 	}

@@ -9,7 +9,7 @@
 using namespace std;
 
 int main(int argc, char **argv){
-	float dt = 0.1;
+	float dt = 0.01;
 	int t_min = -300;
 	int t_max = 300;
 	char title[100];
