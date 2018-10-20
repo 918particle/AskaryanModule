@@ -25,11 +25,13 @@ std::vector<float>* Askaryan::eta(){
 	return result;
 }
 
-void Askaryan::setAskTheta(float x){
+void Askaryan::setAskTheta(float x)
+{
 	_askaryanTheta = x;
 }
 
-void Askaryan::setAskFreq(std::vector<float> *x){
+void Askaryan::setAskFreq(std::vector<float> *x)
+{
 	_askaryanFreq = x;
 }
 
@@ -70,10 +72,9 @@ std::vector<cf>* Askaryan::I_ff(){
 		float re_d = 1-3*pow((*j),2)*cos(_askaryanTheta)/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C)/(1+pow((*j),2));
 		float im_d = -(*j)-3*pow((*j),3)*cos(_askaryanTheta)/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C)/(1+pow((*j),2));
 		cf denom(re_d,im_d);
-		cf scale(PSF,0.0);
 		cf power(-0.5*pow((*i)*_askaryanDepthA,2)*pow(cos(_askaryanTheta)-COS_THETA_C,2)/(1+pow((*j),2)),
 			-(*j)*0.5*pow((*i)*_askaryanDepthA,2)*pow(cos(_askaryanTheta)-COS_THETA_C,2)/(1+pow((*j),2)));
-		result->push_back(exp(scale*power)/sqrt(denom)); //JCH March 9th, 2016...the cone width needs tuning here.
+		result->push_back(exp(power)/sqrt(denom)); //JCH March 9th, 2016...the cone width needs tuning here.
 	}
 	delete K;
 	delete Eta;
@@ -235,39 +236,48 @@ std::vector<float>* Askaryan::time(){
 	return result;
 }
 
-void Askaryan::emShower(float E){
-    this->setAskE(E);
-    this->_isEM = 1;
-    float E_CRIT = 0.073; //GeV
-	//Greissen EM shower profile from Energy E in GeV.
-	std::vector<float> *nx = new std::vector<float>;
+void Askaryan::emShower(float E=0.0)
+{
+	this->setAskE(E);
+	this->_isEM = 1;
+	float E_CRIT = 0.073; //GeV
 	float max_x = 50.0; //maximum number of radiation lengths
 	float dx = 0.01; //small enough bin in depth for our purposes.
-	float x_start = dx; //starting radiation length
+	float x_start = 0.01; //starting radiation length
+	//Greissen EM shower profile from Energy E in GeV.
+	std::vector<float> *nx = new std::vector<float>();
+	nx->clear();
+	float a=0.0;
+	float b=0.0;
+	float c=0.0;
+	float d=0.0;
 	for(float x=x_start;x<max_x;x+=dx){
-        float a = 0.31/sqrt(log(E/E_CRIT));
-        float b = x;
-        float c = 1.5*x;
-        float d = log((3*x)/(x+2*log(E/E_CRIT)));
+        a = 0.31/sqrt(log(E/E_CRIT));
+        b = x;
+        c = 1.5*x;
+        d = log((3*x)/(x+2*log(E/E_CRIT)));
 		nx->push_back(a*exp(b-c*d));
 	}
-    //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
-    std::vector<float>::iterator n_max = max_element(nx->begin(),nx->end());
-    float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
+	//find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
+	std::vector<float>::iterator n_max=max_element(nx->begin(),nx->end());
+	float excess=0.09+dx*(std::distance(nx->begin(),n_max))*ICE_RAD_LENGTH/ICE_DENSITY*1.0e-4;
 	this->setNmax(excess*(*n_max)/1000.0);
 	//find depth, which is really the FWHM of this Greisen formula.
-	std::vector<float>::iterator i;
-	for(i=nx->begin();i!=nx->end();++i){
+	std::vector<float>::iterator i=nx->begin();
+	for(i=nx->begin();i!=nx->end();++i)
+	{
 		if((*i)/(*n_max)>0.606531) break;
 	}
-	std::vector<float>::iterator j;
-	for(j=nx->end();j!=nx->begin();--j){
-		if((*j)/(*n_max)>0.606531) break;
+	std::vector<float>::iterator j=i;
+	for(j=i;j!=nx->end();++j)
+	{
+		if((*j)/(*n_max)<0.606531) break;
 	}
 	this->setAskDepthA(dx*std::distance(i,j)/ICE_DENSITY*ICE_RAD_LENGTH/100.0); //meters
+	delete nx;
 }
 
-void Askaryan::hadShower(float E){
+void Askaryan::hadShower(float E=0.0){
 	this->setAskE(E);
     this->_isHAD = 1;
     //Gaisser-Hillas hadronic shower parameterization
@@ -280,10 +290,13 @@ void Askaryan::hadShower(float E){
     float lambda = 113.03; //g/cm^2
     float Ec = 0.17006; //GeV
     float Xmax = X0*log(E/Ec);
+    float a=0.0;
+    float b=0.0;
+    float c=0.0;
 	for(float x=x_start;x<max_x;x+=dx){
-		float a = S0*E/Ec*(Xmax-lambda)/Xmax*exp(Xmax/lambda-1);
-		float b = pow(x/(Xmax-lambda),Xmax/lambda);
-		float c = exp(-x/lambda);
+		a = S0*E/Ec*(Xmax-lambda)/Xmax*exp(Xmax/lambda-1);
+		b = pow(x/(Xmax-lambda),Xmax/lambda);
+		c = exp(-x/lambda);
 		nx->push_back(a*b*c);
 	}
     //find location of maximum, and charge excess from Fig. 5.9, compare in cm not m.
@@ -292,15 +305,16 @@ void Askaryan::hadShower(float E){
 	this->setNmax(excess*(*n_max)/1000.0);
 	//find depth, which is really the FWHM of this Gaisser-Hillas 
 	//formula.  I chose the 1-sigma width to better represent the gaussian.
-	std::vector<float>::iterator i;
+	std::vector<float>::iterator i=nx->begin();
 	for(i=nx->begin();i!=nx->end();++i){
 		if((*i)/(*n_max)>0.606531) break;
 	}
-	std::vector<float>::iterator j;
-	for(j=nx->end();j!=nx->begin();--j){
-		if((*j)/(*n_max)>0.606531) break;
+	std::vector<float>::iterator j=i;
+	for(j=i;j!=nx->end();++j){
+		if((*j)/(*n_max)<0.606531) break;
 	}
 	this->setAskDepthA(dx*std::distance(i,j)/ICE_DENSITY/100.0); //meters
+	delete nx;
 }
 
 void Askaryan::lpmEffect(){
