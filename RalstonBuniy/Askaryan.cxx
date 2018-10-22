@@ -5,23 +5,21 @@
 #include <algorithm>
 #include <iostream>
 
-std::vector<float>* Askaryan::k(){
-    std::vector<float> *result= new std::vector<float>;
-	std::vector<float>::iterator j;
+std::vector<float> Askaryan::k()
+{
+    std::vector<float> result;
+	std::vector<float>::iterator j=_askaryanFreq->begin();
     for(j=_askaryanFreq->begin();j!=_askaryanFreq->end();++j)
-        result->push_back(2.0*PI*(*j)/(LIGHT_SPEED/INDEX));
+        result.push_back(2.0*PI*(*j)/(LIGHT_SPEED/INDEX));
 	return result;
 }
 
-std::vector<float>* Askaryan::eta(){
-	std::vector<float> *result = new std::vector<float>;
-	std::vector<float> *K = new std::vector<float>;
-	K = k();
+std::vector<float> Askaryan::eta(){
+	std::vector<float> result;
+	std::vector<float> K = k();
 	std::vector<float>::iterator i;
-	for(i=K->begin();i<=K->end();++i)
-		result->push_back((*i)*pow(_askaryanDepthA,2)/_askaryanR
-			*pow(sin(_askaryanTheta),2));
-	delete K;
+	for(i=K.begin();i<=K.end();++i)
+		result.push_back((*i)*pow(_askaryanDepthA,2)/_askaryanR*pow(sin(_askaryanTheta),2));
 	return result;
 }
 
@@ -59,43 +57,39 @@ float Askaryan::getAskDepthA(){
     return _askaryanDepthA;
 }
 
-std::vector<cf>* Askaryan::I_ff(){
+std::vector<cf> Askaryan::I_ff()
+{
 //Equation 17 from Buniy and Ralston, sans pre-factor to fit into Eq. 19, the general form.
-    std::vector<float> *K = new std::vector<float>;
-    K = k();
-	std::vector<float> *Eta = new std::vector<float>;
-	Eta = eta();
-	std::vector<cf>* result = new std::vector<cf>;
+    std::vector<float> K = k();
+	std::vector<float> Eta = eta();
+	std::vector<cf> result;
 	std::vector<float>::iterator i;
 	std::vector<float>::iterator j;
-	for(i=K->begin(),j=Eta->begin();j!=Eta->end();++i,++j){
+	for(i=K.begin(),j=Eta.begin();j!=Eta.end();++i,++j){
 		float re_d = 1-3*pow((*j),2)*cos(_askaryanTheta)/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C)/(1+pow((*j),2));
 		float im_d = -(*j)-3*pow((*j),3)*cos(_askaryanTheta)/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C)/(1+pow((*j),2));
 		cf denom(re_d,im_d);
 		cf power(-0.5*pow((*i)*_askaryanDepthA,2)*pow(cos(_askaryanTheta)-COS_THETA_C,2)/(1+pow((*j),2)),
 			-(*j)*0.5*pow((*i)*_askaryanDepthA,2)*pow(cos(_askaryanTheta)-COS_THETA_C,2)/(1+pow((*j),2)));
-		result->push_back(exp(power)/sqrt(denom)); //JCH March 9th, 2016...the cone width needs tuning here.
+		result.push_back(exp(power)/sqrt(denom)); //JCH March 9th, 2016...the cone width needs tuning here.
 	}
-	delete K;
-	delete Eta;
 	return result;
 }
 
-std::vector<std::vector<cf> >* Askaryan::E_omega(){
+std::vector<std::vector<cf> > Askaryan::E_omega()
+{
 	//Electric field in the general case, eq. 19 in the paper.
-	std::vector<float> *K = new std::vector<float>;
-	K = k();
-	std::vector<float> *Eta = new std::vector<float>;
-	Eta = eta();
-	std::vector<cf> *I_FF = new std::vector<cf>;
-	I_FF = I_ff();
-    std::vector<cf> *rComp = new std::vector<cf>;
-	std::vector<cf> *thetaComp = new std::vector<cf>;
-	std::vector<cf> *phiComp = new std::vector<cf>;
-	std::vector<cf>::iterator i;
-	std::vector<float>::iterator j;
-	std::vector<float>::iterator q;
-	for(i=I_FF->begin(),j=Eta->begin(),q=K->begin();q!=K->end();++i,++j,++q){
+	std::vector<float> K = k();
+	std::vector<float> Eta = eta();
+	std::vector<cf> I_FF = I_ff();
+	std::vector<cf> rComp;
+	std::vector<cf> thetaComp;
+	std::vector<cf> phiComp;
+	std::vector<cf>::iterator i=I_FF.begin();
+	std::vector<float>::iterator j=Eta.begin();
+	std::vector<float>::iterator q=K.begin();
+	for(i=I_FF.begin(),j=Eta.begin(),q=K.begin();q!=K.end();++i,++j,++q)
+	{
 		//Overall normalization: a(m), nu(GHz), Nmax(1000), nu(GHz)...checked JCH March 8th, 2016
 		float nu = LIGHT_SPEED*(*q)/(2.0*PI);
 		cf norm(2.52e-7*_askaryanDepthA*_Nmax*nu/_askaryanR/NORM,0.0);
@@ -103,56 +97,55 @@ std::vector<std::vector<cf> >* Askaryan::E_omega(){
 		cf psi(sin(_askaryanTheta)*sin((*q)*_askaryanR),-sin(_askaryanTheta)*cos((*q)*_askaryanR));
 		//radial component (imaginary part is zero)...checked JCH March 8th, 2016
 		cf rComp_num(-(cos(_askaryanTheta)-COS_THETA_C)/sin(_askaryanTheta),0.0);
-		rComp->push_back((*i)*norm*psi*rComp_num);
+		rComp.push_back((*i)*norm*psi*rComp_num);
 		//theta component (has real and imaginary parts)...checked JCH March 8th, 2016
 		cf thetaComp_num(1+pow((*j),2)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C),
 			-(*j)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C));
-		thetaComp->push_back((*i)*norm*psi*thetaComp_num);
+		thetaComp.push_back((*i)*norm*psi*thetaComp_num);
 		//phi component (is zero)...checked JCH March 8th, 2016
 		cf phiComp_num(0,0);
-		phiComp->push_back(phiComp_num);
+		phiComp.push_back(phiComp_num);
 	}
-    
-    if(_useFormFactor){
-        std::vector<float>::iterator k;
-        std::vector<cf>::iterator Er=rComp->begin();
-        std::vector<cf>::iterator Etheta=thetaComp->begin();
-        std::vector<cf>::iterator Ephi=phiComp->begin();
-        for (k=K->begin();k!=K->end();++k){
-            float a = (*k)/_rho0;
-            float b = sin(_askaryanTheta)/sqrt(2.0*PI);
-            float atten = pow(1+pow(a,2)*pow(b,2),-1.5);
-            (*Er)*=atten;
-            (*Etheta)*=atten;
-            (*Ephi)*=atten;
-            ++Er;
-            ++Etheta;
-            ++Ephi;
-        }
-    }
-    
-	delete K;
-	delete I_FF;
-	delete Eta;
-	//Electric field: r, theta, phi
-	std::vector<std::vector<cf> > *result = new std::vector<std::vector<cf> >;
-	result->push_back(*rComp);
-	result->push_back(*thetaComp);
-	result->push_back(*phiComp);
+
+	if(_useFormFactor)
+	{
+		std::vector<float>::iterator k;
+		std::vector<cf>::iterator Er=rComp.begin();
+		std::vector<cf>::iterator Etheta=thetaComp.begin();
+		std::vector<cf>::iterator Ephi=phiComp.begin();
+		for (k=K.begin();k!=K.end();++k)
+		{
+			float a = (*k)/_rho0;
+			float b = sin(_askaryanTheta)/sqrt(2.0*PI);
+			float atten = pow(1+pow(a,2)*pow(b,2),-1.5);
+			(*Er)*=atten;
+			(*Etheta)*=atten;
+			(*Ephi)*=atten;
+			++Er;
+			++Etheta;
+			++Ephi;
+		}
+	}
+
+	// //Electric field: r, theta, phi
+	std::vector<std::vector<cf> > result;
+	result.push_back(rComp);
+	result.push_back(thetaComp);
+	result.push_back(phiComp);
 	return result;
 }
 
-float Askaryan::criticalF(){
+float Askaryan::criticalF()
+{
 		return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
 }
 
-std::vector<std::vector<float> >* Askaryan::E_t(){
-	std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
-	e = E_omega();
-	std::vector<cf> e_r = e->at(0);
-	std::vector<cf> e_theta = e->at(1);
-	std::vector<cf> e_phi = e->at(2);
-	delete e;
+std::vector<std::vector<float> > Askaryan::E_t()
+{
+	std::vector<std::vector<cf> > e = E_omega();
+	std::vector<cf> e_r = e.at(0);
+	std::vector<cf> e_theta = e.at(1);
+	std::vector<cf> e_phi = e.at(2);
 	float df = criticalF()/(float(e_r.size()));
 	df*=1000.0; //now in MHz.
 	int n = e_r.size()*2;
@@ -198,7 +191,7 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 	fftw_execute(p1);
 	fftw_execute(p2);
 	fftw_execute(p3);
-	std::vector<std::vector<float> > *result = new std::vector<std::vector<float> >;
+	std::vector<std::vector<float> > result;
 	std::vector<float> Er_t;
 	std::vector<float> Etheta_t;
 	std::vector<float> Ephi_t;
@@ -221,18 +214,28 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 		std::reverse(Etheta_t.begin(),Etheta_t.end());
 		std::reverse(Ephi_t.begin(),Ephi_t.end());
 	}
-	result->push_back(Er_t);
-	result->push_back(Etheta_t);
-	result->push_back(Ephi_t);
+	result.push_back(Er_t);
+	result.push_back(Etheta_t);
+	result.push_back(Ephi_t);
+	fftw_destroy_plan(p1);
+	fftw_destroy_plan(p2);
+	fftw_destroy_plan(p3);
+	fftw_free(in1);
+	fftw_free(in2);
+	fftw_free(in3);
+	fftw_free(out1);
+	fftw_free(out2);
+	fftw_free(out3);
 	return result;
 }
 
-std::vector<float>* Askaryan::time(){
+std::vector<float> Askaryan::time()
+{
 	float fc = criticalF();
 	float dt = 1.0/(2.0*fc);
 	int n = 2*_askaryanFreq->size();
-	std::vector<float> *result = new std::vector<float>;
-	for(int i=0;i<n;++i) result->push_back(float(i)*dt);
+	std::vector<float> result;
+	for(int i=0;i<n;++i) result.push_back(float(i)*dt);
 	return result;
 }
 
@@ -277,7 +280,8 @@ void Askaryan::emShower(float E=0.0)
 	delete nx;
 }
 
-void Askaryan::hadShower(float E=0.0){
+void Askaryan::hadShower(float E=0.0)
+{
 	this->setAskE(E);
     this->_isHAD = 1;
     //Gaisser-Hillas hadronic shower parameterization
@@ -317,7 +321,8 @@ void Askaryan::hadShower(float E=0.0){
 	delete nx;
 }
 
-void Askaryan::lpmEffect(){
+void Askaryan::lpmEffect()
+{
     //"Accounts" for the "LPM effect," by "stretching" the shower profile, according to
     //Klein and Gerhardt (2010). Polynomial fit to figure 9 for EM and Hadronic.
     float prior_a = this->getAskDepthA();

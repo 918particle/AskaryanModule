@@ -83,12 +83,12 @@ class Askaryan {
 		void emShower(float); //Shower parameters from energy in GeV
 		void hadShower(float); //Shower parameters from energy in GeV
 		void setFormScale(float); //Set shape of shower (meters^{-1}).
-		std::vector<float>* k(); //1/meters
-		std::vector<float>* eta(); //unitless
-		std::vector<cf>* I_ff(); //m
-		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
-		std::vector<std::vector<float> >* E_t(); //V/m
-		std::vector<float>* time(); //ns
+		std::vector<float> k(); //1/meters
+		std::vector<float> eta(); //unitless
+		std::vector<cf> I_ff(); //m
+		std::vector<std::vector<cf> > E_omega(); //V/m/MHz
+		std::vector<std::vector<float> > E_t(); //V/m
+		std::vector<float> time(); //ns
 		void lpmEffect();
 		void setIndex(float);
 };
