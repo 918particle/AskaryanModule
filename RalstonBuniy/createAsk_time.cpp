@@ -30,13 +30,13 @@ int main(int argc, char **argv)
 		sprintf(title,"shower_%3.1f_%3.1f_JCAC_t.dat",atof(argv[1]),theta);
 		std::ofstream out(title);
 		std::vector<std::vector<float> > Eshow = h->E_t();
-		std::vector<float> eTheta = Eshow.at(1);
+		// std::vector<float> eTheta = Eshow.at(1);
 		//Units: V/GeV vs. time
 		std::vector<float>::iterator j,k;
-		for(j=t.begin(),k=eTheta.begin();j!=t.end(),k!=eTheta.end();++j,++k)
-		{
-			out<<(*j)<<" "<<(*k)*h->getAskR()/h->getAskE()<<std::endl;
-		}
+	// 	for(j=t.begin(),k=eTheta.begin();j!=t.end(),k!=eTheta.end();++j,++k)
+	// 	{
+	// 		out<<(*j)<<" "<<(*k)*h->getAskR()/h->getAskE()<<std::endl;
+	// 	}
 		out.close();
 	}
 	delete freqs;
