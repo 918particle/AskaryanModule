@@ -18,8 +18,8 @@ std::vector<float> Askaryan::eta(){
 	std::vector<float> result;
 	std::vector<float> K = k();
 	std::vector<float>::iterator i;
-	for(i=K.begin();i<=K.end();++i)
-		result.push_back((*i)*pow(_askaryanDepthA,2)/_askaryanR*pow(sin(_askaryanTheta),2));
+	for(i=K.begin();i!=K.end();++i)
+		result.push_back((*i)*(_askaryanDepthA*_askaryanDepthA)/_askaryanR*(sin(_askaryanTheta)*sin(_askaryanTheta)));
 	return result;
 }
 
@@ -33,27 +33,33 @@ void Askaryan::setAskFreq(std::vector<float> *x)
 	_askaryanFreq = x;
 }
 
-void Askaryan::setAskR(float x){
+void Askaryan::setAskR(float x)
+{
 	_askaryanR = x;
 }
 
-void Askaryan::setAskDepthA(float x){
+void Askaryan::setAskDepthA(float x)
+{
 	_askaryanDepthA = x;
 }
 
-void Askaryan::setNmax(float x){
+void Askaryan::setNmax(float x)
+{
 	_Nmax = x;
 }
 
-void Askaryan::setAskE(float x){
+void Askaryan::setAskE(float x)
+{
 	_E = x;
 }
 
-float Askaryan::getAskE(){
+float Askaryan::getAskE()
+{
     return _E;
 }
 
-float Askaryan::getAskDepthA(){
+float Askaryan::getAskDepthA()
+{
     return _askaryanDepthA;
 }
 
@@ -69,7 +75,7 @@ std::vector<cf> Askaryan::I_ff()
 	float im_p=0;
 	float re_d=0;
 	float im_d=0;
-	for(i=K.begin(),j=Eta.begin();i!=K.begin()+10,j!=Eta.begin()+10;++i,++j)
+	for(i=K.begin(),j=Eta.begin();i!=K.end(),j!=Eta.end();++i,++j)
 	{
 		re_d = 1-3*((*j)*(*j))*cos(_askaryanTheta)/(sin(_askaryanTheta)*sin(_askaryanTheta))*(cos(_askaryanTheta)-COS_THETA_C)/(1+((*j)*(*j)));
 		im_d = -(*j)-3*((*j)*(*j)*(*j))*cos(_askaryanTheta)/(sin(_askaryanTheta)*sin(_askaryanTheta))*(cos(_askaryanTheta)-COS_THETA_C)/(1+((*j)*(*j)));
@@ -78,7 +84,7 @@ std::vector<cf> Askaryan::I_ff()
 		im_p = -(*j)*0.5*((*i)*_askaryanDepthA*(*i)*_askaryanDepthA)*((cos(_askaryanTheta)-COS_THETA_C)*(cos(_askaryanTheta)-COS_THETA_C))/(1+((*j)*(*j)));
 		cf power(re_p,im_p);
 exp(power);
-		// result.push_back(exp(power)/sqrt(denom));
+		result.push_back(exp(power)/sqrt(denom));
 	}
 	return result;
 }
@@ -89,56 +95,56 @@ std::vector<std::vector<cf> > Askaryan::E_omega()
 	std::vector<float> K = k();
 	std::vector<float> Eta = eta();
 	std::vector<cf> I_FF = I_ff();
-	// std::vector<cf> rComp; rComp.clear();
-	// std::vector<cf> thetaComp; thetaComp.clear();
-	// std::vector<cf> phiComp; phiComp.clear();
-	// std::vector<float>::iterator q=K.begin();
-	// std::vector<float>::iterator j=Eta.begin();
-	// std::vector<cf>::iterator i=I_FF.begin();
-	// for(i=I_FF.begin(),j=Eta.begin(),q=K.begin();q!=K.end();++i,++j,++q)
-	// {
-	// 	//Overall normalization: a(m), nu(GHz), Nmax(1000), nu(GHz)...checked JCH March 8th, 2016
-	// 	float nu = LIGHT_SPEED*(*q)/(2.0*PI);
-	// 	cf norm(2.52e-7*_askaryanDepthA*_Nmax*nu/_askaryanR/NORM,0.0);
-	// 	//Kinematic factor, psi...checked JCH March 8th, 2016...fixed missing sin(theta)
-	// 	cf psi(sin(_askaryanTheta)*sin((*q)*_askaryanR),-sin(_askaryanTheta)*cos((*q)*_askaryanR));
-	// 	//radial component (imaginary part is zero)...checked JCH March 8th, 2016
-	// 	cf rComp_num(-(cos(_askaryanTheta)-COS_THETA_C)/sin(_askaryanTheta),0.0);
-	// 	rComp.push_back((*i)*norm*psi*rComp_num);
-	// 	//theta component (has real and imaginary parts)...checked JCH March 8th, 2016
-	// 	cf thetaComp_num(1+pow((*j),2)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C),
-	// 		-(*j)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C));
-	// 	thetaComp.push_back((*i)*norm*psi*thetaComp_num);
-	// 	//phi component (is zero)...checked JCH March 8th, 2016
-	// 	cf phiComp_num(0,0);
-	// 	phiComp.push_back(phiComp_num);
-	// }
+	std::vector<cf> rComp; rComp.clear();
+	std::vector<cf> thetaComp; thetaComp.clear();
+	std::vector<cf> phiComp; phiComp.clear();
+	std::vector<float>::iterator q=K.begin();
+	std::vector<float>::iterator j=Eta.begin();
+	std::vector<cf>::iterator i=I_FF.begin();
+	for(i=I_FF.begin(),j=Eta.begin(),q=K.begin();q!=K.end();++i,++j,++q)
+	{
+		//Overall normalization: a(m), nu(GHz), Nmax(1000), nu(GHz)...checked JCH March 8th, 2016
+		float nu = LIGHT_SPEED*(*q)/(2.0*PI);
+		cf norm(2.52e-7*_askaryanDepthA*_Nmax*nu/_askaryanR/NORM,0.0);
+		//Kinematic factor, psi...checked JCH March 8th, 2016...fixed missing sin(theta)
+		cf psi(sin(_askaryanTheta)*sin((*q)*_askaryanR),-sin(_askaryanTheta)*cos((*q)*_askaryanR));
+		//radial component (imaginary part is zero)...checked JCH March 8th, 2016
+		cf rComp_num(-(cos(_askaryanTheta)-COS_THETA_C)/sin(_askaryanTheta),0.0);
+		rComp.push_back((*i)*norm*psi*rComp_num);
+		//theta component (has real and imaginary parts)...checked JCH March 8th, 2016
+		cf thetaComp_num(1+pow((*j),2)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C),
+			-(*j)/pow((1+(*j)),2)*COS_THETA_C/pow(sin(_askaryanTheta),2)*(cos(_askaryanTheta)-COS_THETA_C));
+		thetaComp.push_back((*i)*norm*psi*thetaComp_num);
+		//phi component (is zero)...checked JCH March 8th, 2016
+		cf phiComp_num(0,0);
+		phiComp.push_back(phiComp_num);
+	}
 
-	// if(_useFormFactor)
-	// {
-	// 	std::vector<float>::iterator k;
-	// 	std::vector<cf>::iterator Er=rComp.begin();
-	// 	std::vector<cf>::iterator Etheta=thetaComp.begin();
-	// 	std::vector<cf>::iterator Ephi=phiComp.begin();
-	// 	for (k=K.begin();k!=K.end();++k)
-	// 	{
-	// 		float a = (*k)/_rho0;
-	// 		float b = sin(_askaryanTheta)/sqrt(2.0*PI);
-	// 		float atten = pow(1+pow(a,2)*pow(b,2),-1.5);
-	// 		(*Er)*=atten;
-	// 		(*Etheta)*=atten;
-	// 		(*Ephi)*=atten;
-	// 		++Er;
-	// 		++Etheta;
-	// 		++Ephi;
-	// 	}
-	// }
+	if(_useFormFactor)
+	{
+		std::vector<float>::iterator k;
+		std::vector<cf>::iterator Er=rComp.begin();
+		std::vector<cf>::iterator Etheta=thetaComp.begin();
+		std::vector<cf>::iterator Ephi=phiComp.begin();
+		for (k=K.begin();k!=K.end();++k)
+		{
+			float a = (*k)/_rho0;
+			float b = sin(_askaryanTheta)/sqrt(2.0*PI);
+			float atten = pow(1+pow(a,2)*pow(b,2),-1.5);
+			(*Er)*=atten;
+			(*Etheta)*=atten;
+			(*Ephi)*=atten;
+			++Er;
+			++Etheta;
+			++Ephi;
+		}
+	}
 
 	// //Electric field: r, theta, phi
 	std::vector<std::vector<cf> > result;
-	// result.push_back(rComp);
-	// result.push_back(thetaComp);
-	// result.push_back(phiComp);
+	result.push_back(rComp);
+	result.push_back(thetaComp);
+	result.push_back(phiComp);
 	return result;
 }
 
@@ -150,89 +156,93 @@ float Askaryan::criticalF()
 std::vector<std::vector<float> > Askaryan::E_t()
 {
 	std::vector<std::vector<cf> > e = E_omega();
-	// std::vector<cf> e_r = e.at(0);
-	// std::vector<cf> e_theta = e.at(1);
-	// std::vector<cf> e_phi = e.at(2);
-	// float df = criticalF()/(float(e_r.size()));
-	// df*=1000.0; //now in MHz.
-	// int n = e_r.size()*2;
-	// fftw_complex *in1,*in2,*in3,*out1,*out2,*out3;
-	// in1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// in3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// out1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// out3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
-	// fftw_plan p1,p2,p3;
-	// if(FFTW_CHOICE=="FFTW_BACKWARD")
-	// {
-	// 	p1 = fftw_plan_dft_1d(n,in1,out1,1,FFTW_ESTIMATE);
-	// 	p2 = fftw_plan_dft_1d(n,in2,out2,1,FFTW_ESTIMATE);
-	// 	p3 = fftw_plan_dft_1d(n,in3,out3,1,FFTW_ESTIMATE);
-	// }
-	// else
-	// {
-	// 	p1 = fftw_plan_dft_1d(n,in1,out1,-1,FFTW_ESTIMATE);
-	// 	p2 = fftw_plan_dft_1d(n,in2,out2,-1,FFTW_ESTIMATE);
-	// 	p3 = fftw_plan_dft_1d(n,in3,out3,-1,FFTW_ESTIMATE);
-	// }
-	// //Proper assignment to input transforms
-	// for(int i=0;i<n;++i){
-	// 	if(i<n/2){
-	// 		in1[i][0] = real(e_r[i]);
-	// 		in2[i][0] = real(e_theta[i]);
-	// 		in3[i][0] = real(e_phi[i]);
-	// 		in1[i][1] = imag(e_r[i]);
-	// 		in2[i][1] = imag(e_theta[i]);
-	// 		in3[i][1] = imag(e_phi[i]);
-	// 	}
-	// 	else{
-	// 		in1[i][0] = real(e_r[n-i-1]);
-	// 		in2[i][0] = real(e_theta[n-i-1]);
-	// 		in3[i][0] = real(e_phi[n-i+1]);
-	// 		in1[i][1] = -1.0*imag(e_r[n-i-1]);
-	// 		in2[i][1] = -1.0*imag(e_theta[n-i-1]);
-	// 		in3[i][1] = -1.0*imag(e_phi[n-i-1]);
-	// 	}
-	// }
-	// fftw_execute(p1);
-	// fftw_execute(p2);
-	// fftw_execute(p3);
+	std::vector<cf> e_r = e.at(0);
+	std::vector<cf> e_theta = e.at(1);
+	std::vector<cf> e_phi = e.at(2);
+	float df = criticalF()/(float(e_r.size()));
+	df*=1000.0; //now in MHz.
+	int n = e_r.size()*2;
+	fftw_complex *in1,*in2,*in3,*out1,*out2,*out3;
+	in1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	in2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	in3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out1 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out2 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	out3 = (fftw_complex*)fftw_malloc(sizeof(fftw_complex)*n);
+	fftw_plan p1=0;
+	fftw_plan p2=0;
+	fftw_plan p3=0;
+	if(FFTW_CHOICE=="FFTW_BACKWARD")
+	{
+		p1 = fftw_plan_dft_1d(n,in1,out1,1,FFTW_ESTIMATE);
+		p2 = fftw_plan_dft_1d(n,in2,out2,1,FFTW_ESTIMATE);
+		p3 = fftw_plan_dft_1d(n,in3,out3,1,FFTW_ESTIMATE);
+	}
+	else
+	{
+		p1 = fftw_plan_dft_1d(n,in1,out1,-1,FFTW_ESTIMATE);
+		p2 = fftw_plan_dft_1d(n,in2,out2,-1,FFTW_ESTIMATE);
+		p3 = fftw_plan_dft_1d(n,in3,out3,-1,FFTW_ESTIMATE);
+	}
+	// Proper assignment to input transforms
+	for(int i=0;i<n;++i)
+	{
+		if(i<n/2){
+			in1[i][0] = real(e_r[i]);
+			in2[i][0] = real(e_theta[i]);
+			in3[i][0] = real(e_phi[i]);
+			in1[i][1] = imag(e_r[i]);
+			in2[i][1] = imag(e_theta[i]);
+			in3[i][1] = imag(e_phi[i]);
+		}
+		else{
+			in1[i][0] = real(e_r[n-i-1]);
+			in2[i][0] = real(e_theta[n-i-1]);
+			in3[i][0] = real(e_phi[n-i-1]);
+			in1[i][1] = -1.0*imag(e_r[n-i-1]);
+			in2[i][1] = -1.0*imag(e_theta[n-i-1]);
+			in3[i][1] = -1.0*imag(e_phi[n-i-1]);
+		}
+	}
+	fftw_execute(p1);
+	fftw_execute(p2);
+	fftw_execute(p3);
 	std::vector<std::vector<float> > result;
-	// std::vector<float> Er_t;
-	// std::vector<float> Etheta_t;
-	// std::vector<float> Ephi_t;
-	// for(int i=0;i<n;++i)
-	// {
-	// 	//Output the real part.  It has been verified that the imaginary
-	// 	//part is zero, meaning all the power is present in Re{E(t)}.
-	// 	//We must multiply the result by df in MHz, because the IFFT is
-	// 	//computed discretely, without the frequency measure.  This
-	// 	//changes the final units from V/m/MHz to V/m vs. time.
-	// 	Er_t.push_back(out1[i][0]*df);
-	// 	Etheta_t.push_back(out2[i][0]*df);
-	// 	Ephi_t.push_back(out3[i][0]*df);
-	// }
-	// //Note: The choice of sign in the Fourier transform convention should not determine physical
-	// //properties of the output.  The following code ensures the correct physical timing, according
-	// //to the RB paper, and that the either choice of convention produces the same answer.
-	// if(FFTW_CHOICE=="FFTW_BACKWARD"){
-	// 	std::reverse(Er_t.begin(),Er_t.end());
-	// 	std::reverse(Etheta_t.begin(),Etheta_t.end());
-	// 	std::reverse(Ephi_t.begin(),Ephi_t.end());
-	// }
-	// result.push_back(Er_t);
-	// result.push_back(Etheta_t);
-	// result.push_back(Ephi_t);
-	// fftw_destroy_plan(p1);
-	// fftw_destroy_plan(p2);
-	// fftw_destroy_plan(p3);
-	// fftw_free(in1);
-	// fftw_free(in2);
-	// fftw_free(in3);
-	// fftw_free(out1);
-	// fftw_free(out2);
-	// fftw_free(out3);
+	std::vector<float> Er_t;
+	std::vector<float> Etheta_t;
+	std::vector<float> Ephi_t;
+	for(int i=0;i<n;++i)
+	{
+		//Output the real part.  It has been verified that the imaginary
+		//part is zero, meaning all the power is present in Re{E(t)}.
+		//We must multiply the result by df in MHz, because the IFFT is
+		//computed discretely, without the frequency measure.  This
+		//changes the final units from V/m/MHz to V/m vs. time.
+		Er_t.push_back(out1[i][0]*df);
+		Etheta_t.push_back(out2[i][0]*df);
+		Ephi_t.push_back(out3[i][0]*df);
+	}
+	//Note: The choice of sign in the Fourier transform convention should not determine physical
+	//properties of the output.  The following code ensures the correct physical timing, according
+	//to the RB paper, and that the either choice of convention produces the same answer.
+	if(FFTW_CHOICE=="FFTW_BACKWARD"){
+		std::reverse(Er_t.begin(),Er_t.end());
+		std::reverse(Etheta_t.begin(),Etheta_t.end());
+		std::reverse(Ephi_t.begin(),Ephi_t.end());
+	}
+	result.push_back(Er_t);
+	result.push_back(Etheta_t);
+	result.push_back(Ephi_t);
+	fftw_destroy_plan(p1);
+	fftw_destroy_plan(p2);
+	fftw_destroy_plan(p3);
+	fftw_free(in1);
+	fftw_free(in2);
+	fftw_free(in3);
+	fftw_free(out1);
+	fftw_free(out2);
+	fftw_free(out3);
+	fftw_cleanup();
 	return result;
 }
 
