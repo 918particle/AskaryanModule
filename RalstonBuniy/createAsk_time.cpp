@@ -1,16 +1,13 @@
 #include "Askaryan.h"
 #include <cstdlib>
 #include <fstream>
-#include <ctime>
-#include <iostream>
-#include <complex>
-#include <cmath>
+
 int main(int argc, char **argv)
 {
 	char title[100];
 	std::vector<float> *freqs = new std::vector<float>;
 	float f_i = 0.0; //GHz
-	float f_f = 10.0; //GHz
+	float f_f = 2.0; //GHz
 	float df = 0.01; //GHz
 	for(float f=f_i;f<=f_f;f+=df)
 	{

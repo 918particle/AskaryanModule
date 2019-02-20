@@ -3,6 +3,7 @@
 #include "Askaryan.h"
 #include <fftw3.h>
 #include <algorithm>
+#include <numeric>
 #include <iostream>
 
 std::vector<float> Askaryan::k()
@@ -243,6 +244,15 @@ std::vector<std::vector<float> > Askaryan::E_t()
 	fftw_free(out2);
 	fftw_free(out3);
 	fftw_cleanup();
+	//Check Parseval's theorem.
+	//1. Obtain inner products.
+	float sum_sq_r_t = inner_product(Er_t.begin(),Er_t.end(),Er_t.begin(),0.0);
+	float sum_sq_theta_t = inner_product(Etheta_t.begin(),Etheta_t.end(),Etheta_t.begin(),0.0);
+	float sum_sq_phi_t = inner_product(Ephi_t.begin(),Ephi_t.end(),Ephi_t.begin(),0.0);
+	cf sum_sq_r_f = inner_product(e_r.begin(),e_r.end(),e_r.begin(),cf(0,0));
+	cf sum_sq_theta_f = inner_product(e_theta.begin(),e_theta.end(),e_theta.begin(),cf(0,0));
+	cf sum_sq_phi_f = inner_product(e_phi.begin(),e_phi.end(),e_phi.begin(),cf(0,0));
+	std::cout<<(sum_sq_theta_t - sum_sq_theta_f)/sum_sq_theta_t<<std::endl;
 	return result;
 }
 
