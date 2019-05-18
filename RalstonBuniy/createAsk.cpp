@@ -22,15 +22,14 @@ int main(int argc, char **argv){
 	h->setFormScale(10.0);
 	h->setAskE(atof(argv[1])); //Specified in GeV.
 	h->emShower(atof(argv[1])); //Specified in GeV.
-	for(float theta=0.0;theta>=-10.0;theta-=2.5)
+	for(float theta=-2.5;theta<=2.5;theta+=0.1)
 	{
 		sprintf(title,"shower_%3.1f_%3.1f_JCAC.dat",atof(argv[1]),theta);
 		ofstream out(title);
 		h->setAskTheta((theta+55.82)*3.14159/180.0);
-		vector<vector<cf> > *Eshow = new vector<vector<cf> >;
+		vector<vector<cf> > Eshow;;
 		Eshow = h->E_omega();
-		vector<cf> eTheta = Eshow->at(1);
-		delete Eshow;
+		vector<cf> eTheta = Eshow.at(1);
 		//Units: R |E|/E_c (V/MHz/TeV)
 		for(unsigned int j=0;j<eTheta.size();++j)
 		{

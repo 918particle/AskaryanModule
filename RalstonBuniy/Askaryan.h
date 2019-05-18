@@ -28,7 +28,6 @@ class Askaryan {
 		//Require that even under the LPM elongation, the low-frequency radiation is the same as without LPM
 		//Similar to a strict total track length requirement
 		bool _strictLowFreqLimit;
-		std::string FFTW_CHOICE;
 		float PI;
 		float LIGHT_SPEED;
 		float INDEX;
@@ -52,7 +51,6 @@ class Askaryan {
 					_Nmax(STANDARD_ASK_NMAX),
 					_askaryanTheta(55.82*PI/180.0),
 					_strictLowFreqLimit(false),
-					FFTW_CHOICE("FFTW_BACKWARD"),
 					PI(3.14159),
 					LIGHT_SPEED(0.29972),
 					INDEX(1.78),

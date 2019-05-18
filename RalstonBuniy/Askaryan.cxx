@@ -173,18 +173,9 @@ std::vector<std::vector<float> > Askaryan::E_t()
 	fftw_plan p1=0;
 	fftw_plan p2=0;
 	fftw_plan p3=0;
-	if(FFTW_CHOICE=="FFTW_BACKWARD")
-	{
-		p1 = fftw_plan_dft_1d(n,in1,out1,1,FFTW_ESTIMATE);
-		p2 = fftw_plan_dft_1d(n,in2,out2,1,FFTW_ESTIMATE);
-		p3 = fftw_plan_dft_1d(n,in3,out3,1,FFTW_ESTIMATE);
-	}
-	else
-	{
-		p1 = fftw_plan_dft_1d(n,in1,out1,-1,FFTW_ESTIMATE);
-		p2 = fftw_plan_dft_1d(n,in2,out2,-1,FFTW_ESTIMATE);
-		p3 = fftw_plan_dft_1d(n,in3,out3,-1,FFTW_ESTIMATE);
-	}
+	p1 = fftw_plan_dft_1d(n,in1,out1,1,FFTW_ESTIMATE);
+	p2 = fftw_plan_dft_1d(n,in2,out2,1,FFTW_ESTIMATE);
+	p3 = fftw_plan_dft_1d(n,in3,out3,1,FFTW_ESTIMATE);
 	// Proper assignment to input transforms
 	for(int i=0;i<n;++i)
 	{
@@ -223,14 +214,6 @@ std::vector<std::vector<float> > Askaryan::E_t()
 		Etheta_t.push_back(out2[i][0]*df);
 		Ephi_t.push_back(out3[i][0]*df);
 	}
-	//Note: The choice of sign in the Fourier transform convention should not determine physical
-	//properties of the output.  The following code ensures the correct physical timing, according
-	//to the RB paper, and that the either choice of convention produces the same answer.
-	if(FFTW_CHOICE=="FFTW_BACKWARD"){
-		std::reverse(Er_t.begin(),Er_t.end());
-		std::reverse(Etheta_t.begin(),Etheta_t.end());
-		std::reverse(Ephi_t.begin(),Ephi_t.end());
-	}
 	result.push_back(Er_t);
 	result.push_back(Etheta_t);
 	result.push_back(Ephi_t);
@@ -246,13 +229,34 @@ std::vector<std::vector<float> > Askaryan::E_t()
 	fftw_cleanup();
 	//Check Parseval's theorem.
 	//1. Obtain inner products.
-	float sum_sq_r_t = inner_product(Er_t.begin(),Er_t.end(),Er_t.begin(),0.0);
-	float sum_sq_theta_t = inner_product(Etheta_t.begin(),Etheta_t.end(),Etheta_t.begin(),0.0);
-	float sum_sq_phi_t = inner_product(Ephi_t.begin(),Ephi_t.end(),Ephi_t.begin(),0.0);
-	cf sum_sq_r_f = inner_product(e_r.begin(),e_r.end(),e_r.begin(),cf(0,0));
-	cf sum_sq_theta_f = inner_product(e_theta.begin(),e_theta.end(),e_theta.begin(),cf(0,0));
-	cf sum_sq_phi_f = inner_product(e_phi.begin(),e_phi.end(),e_phi.begin(),cf(0,0));
-	std::cout<<(sum_sq_theta_t - sum_sq_theta_f)/sum_sq_theta_t<<std::endl;
+	std::vector<cf>::iterator i=e_r.begin();
+	std::vector<cf>::iterator j=e_theta.begin();
+	std::vector<cf>::iterator k=e_phi.begin();
+	std::vector<float>::iterator i2=Er_t.begin();
+	std::vector<float>::iterator j2=Etheta_t.begin();
+	std::vector<float>::iterator k2=Ephi_t.begin();
+	float sum_sq_r_f=0.0;
+	float sum_sq_theta_f=0.0;
+	float sum_sq_phi_f=0.0;
+	float sum_sq_r_t=0.0;
+	float sum_sq_theta_t=0.0;
+	float sum_sq_phi_t=0.0;
+	float dt = 1.0/df/float(n);
+	for(i=e_r.begin(),j=e_theta.begin(),k=e_phi.begin();i!=e_r.end(),j!=e_theta.end(),k!=e_phi.end();++i,++j,++k)
+	{
+		sum_sq_r_f+=std::norm(*i)*df;
+		sum_sq_theta_f+=std::norm(*j)*df;
+		sum_sq_phi_f+=std::norm(*k)*df;
+	}
+	for(i2=Er_t.begin(),j2=Etheta_t.begin(),k2=Ephi_t.begin();i2!=Er_t.end(),j2!=Etheta_t.end(),k2!=Ephi_t.end();++i2,++j2,++k2)
+	{
+		sum_sq_r_t+=(*i2)*(*i2)*dt;
+		sum_sq_theta_t+=(*j2)*(*j2)*dt;;
+		sum_sq_phi_t+=(*k2)*(*k2)*dt;;
+	}
+	//Check Parseval's theorem.
+	//2. Compare results.
+	std::cout<<sum_sq_theta_f<<" "<<sum_sq_theta_t<<std::endl;
 	return result;
 }
 
