@@ -25,12 +25,12 @@ float Askaryan::getAskE(){
     return _E;
 }
 
-std::vector<std::vector<cf> >* Askaryan::E_omega()
+std::vector<std::vector<cf> > Askaryan::E_omega()
 {
     std::vector<cf> *rComp = new std::vector<cf>;
 	std::vector<cf> *thetaComp = new std::vector<cf>;
 	std::vector<cf> *phiComp = new std::vector<cf>;
-	std::vector<std::vector<cf> > *result = new std::vector<std::vector<cf> >;
+	std::vector<std::vector<cf> > result;
 	cf zero(0,0);
 	std::vector<float>::iterator f;
 	for(f=_askaryanFreq->begin();f!=_askaryanFreq->end();++f)
@@ -49,9 +49,9 @@ std::vector<std::vector<cf> >* Askaryan::E_omega()
 		cf result(real_part,imaginary_part); //assumes 90 degree phase
 		thetaComp->push_back(result);
 	}
-	result->push_back(*rComp);
-	result->push_back(*thetaComp);
-	result->push_back(*phiComp);
+	result.push_back(*rComp);
+	result.push_back(*thetaComp);
+	result.push_back(*phiComp);
 	return result;
 }
 
@@ -60,13 +60,12 @@ float Askaryan::criticalF()
 		return *max_element(_askaryanFreq->begin(),_askaryanFreq->end());
 }
 
-std::vector<std::vector<float> >* Askaryan::E_t(){
-	std::vector<std::vector<cf> > *e = new std::vector<std::vector<cf> >;
+std::vector<std::vector<float> > Askaryan::E_t(){
+	std::vector<std::vector<cf> > e;
 	e = E_omega();
-	std::vector<cf> e_r = e->at(0);
-	std::vector<cf> e_theta = e->at(1);
-	std::vector<cf> e_phi = e->at(2);
-	delete e;
+	std::vector<cf> e_r = e.at(0);
+	std::vector<cf> e_theta = e.at(1);
+	std::vector<cf> e_phi = e.at(2);
 	float df = criticalF()/(float(e_r.size()));
 	df*=1000.0; //now in MHz.
 	int n = e_r.size()*2;
@@ -112,7 +111,7 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 	fftw_execute(p1);
 	fftw_execute(p2);
 	fftw_execute(p3);
-	std::vector<std::vector<float> > *result = new std::vector<std::vector<float> >;
+	std::vector<std::vector<float> > result;
 	std::vector<float> Er_t;
 	std::vector<float> Etheta_t;
 	std::vector<float> Ephi_t;
@@ -135,19 +134,19 @@ std::vector<std::vector<float> >* Askaryan::E_t(){
 	// 	std::reverse(Etheta_t.begin(),Etheta_t.end());
 	// 	std::reverse(Ephi_t.begin(),Ephi_t.end());
 	// }
-	result->push_back(Er_t);
-	result->push_back(Etheta_t);
-	result->push_back(Ephi_t);
+	result.push_back(Er_t);
+	result.push_back(Etheta_t);
+	result.push_back(Ephi_t);
 	return result;
 }
 
-std::vector<float>* Askaryan::time()
+std::vector<float> Askaryan::time()
 {
 	float fc = criticalF();
 	float dt = 1.0/(2.0*fc);
 	int n = 2*_askaryanFreq->size();
-	std::vector<float> *result = new std::vector<float>;
-	for(int i=0;i<n;++i) result->push_back(float(i)*dt);
+	std::vector<float> result;
+	for(int i=0;i<n;++i) result.push_back(float(i)*dt);
 	return result;
 }
 

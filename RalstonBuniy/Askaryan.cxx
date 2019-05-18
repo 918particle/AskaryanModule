@@ -354,46 +354,47 @@ void Askaryan::hadShower(float E=0.0)
 
 void Askaryan::lpmEffect()
 {
-    //"Accounts" for the "LPM effect," by "stretching" the shower profile, according to
-    //Klein and Gerhardt (2010). Polynomial fit to figure 9 for EM and Hadronic.
-    float prior_a = this->getAskDepthA();
-    
-    if(_isEM){
-        //EM fit parameters
-        float p1 = -2.8564e2;
-        float p2 = 7.8140e1;
-        float p3 = -8.3893;
-        float p4 = 4.4175e-1;
-        float p5 = -1.1382e-2;
-        float p6 = 1.1493e-4;
-        float e = log10(_E)+9.0; //log_10 of Energy in eV
-        float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
-        float a = pow(10.0,log10_shower_depth);
-        this->setAskDepthA(a);
-        //Right here, record the reduction in n_max that I don't believe in.
-        if(_strictLowFreqLimit)
-        {
-		this->setNmax(_Nmax/(a/prior_a));
+	//"Accounts" for the "LPM effect," by "stretching" the shower profile, according to
+	//Klein and Gerhardt (2010). Polynomial fit to figure 9 for EM and Hadronic.
+	float prior_a = this->getAskDepthA();
+	if(_isEM)
+	{
+		//EM fit parameters
+		float p1 = -2.8564e2;
+		float p2 = 7.8140e1;
+		float p3 = -8.3893;
+		float p4 = 4.4175e-1;
+		float p5 = -1.1382e-2;
+		float p6 = 1.1493e-4;
+		float e = log10(_E)+9.0; //log_10 of Energy in eV
+		float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
+		float a = pow(10.0,log10_shower_depth);
+		this->setAskDepthA(a);
+		//Right here, record the reduction in n_max that I don't believe in.
+		if(_strictLowFreqLimit)
+		{
+			this->setNmax(_Nmax/(a/prior_a));
+		}
 	}
-    }
-    if(_isHAD){
-        //HAD fit parameters...should we do this at all?
-        //~ float p1 = 8.0583;
-        //~ float p2 = -2.1100;
-        //~ float p3 = 2.3683e-1;
-        //~ float p4 = -1.2649e-2;
-        //~ float p5 = 3.3106e-4;
-        //~ float p6 = -3.4270e-6;
-        //~ float e = log10(_E)+9.0; //log_10 of Energy in eV
-        //~ float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
-        //~ float a = pow(10.0,log10_shower_depth);
-        //~ this->setAskDepthA(a);
-        //~ //Right here, record the reduction in n_max that I don't believe in.
-        //~ if(_strictLowFreqLimit)
-        //~ {
+	if(_isHAD)
+	{
+		//HAD fit parameters...should we do this at all?
+		//~ float p1 = 8.0583;
+		//~ float p2 = -2.1100;
+		//~ float p3 = 2.3683e-1;
+		//~ float p4 = -1.2649e-2;
+		//~ float p5 = 3.3106e-4;
+		//~ float p6 = -3.4270e-6;
+		//~ float e = log10(_E)+9.0; //log_10 of Energy in eV
+		//~ float log10_shower_depth = p1+p2*pow(e,1)+p3*pow(e,2)+p4*pow(e,3)+p5*pow(e,4)+p6*pow(e,5);
+		//~ float a = pow(10.0,log10_shower_depth);
+		//~ this->setAskDepthA(a);
+		//~ //Right here, record the reduction in n_max that I don't believe in.
+		//~ if(_strictLowFreqLimit)
+		//~ {
 		//~ this->setNmax(_Nmax/(a/prior_a));
 	//~ }
-    }
+	}
 }
 
 void Askaryan::setFormScale(float d){

@@ -46,9 +46,9 @@ class Askaryan {
 		float criticalF(); //GHz
 		float getAskE(); //GeV
 		float getAskR(); //meters
-		std::vector<std::vector<cf> >* E_omega(); //V/m/MHz
-		std::vector<std::vector<float> >* E_t(); //V/m
-		std::vector<float>* time(); //ns
+		std::vector<std::vector<cf> > E_omega(); //V/m/MHz
+		std::vector<std::vector<float> > E_t(); //V/m
+		std::vector<float> time(); //ns
 		void setIndex(float);
 };
 #endif
