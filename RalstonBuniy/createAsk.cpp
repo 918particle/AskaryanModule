@@ -19,7 +19,7 @@ int main(int argc, char **argv){
 	Askaryan *h = new Askaryan();
 	h->setAskFreq(freqs);
 	h->setAskR(1000.0); // 1km
-	h->setFormScale(18.0);
+	h->setFormScale(7.8);
 	h->setAskE(atof(argv[1])); //Specified in GeV.
 	h->emShower(atof(argv[1])); //Specified in GeV.
 	for(float theta=-2.5;theta<=2.5;theta+=0.1)
