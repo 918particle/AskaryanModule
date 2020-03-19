@@ -15,4 +15,4 @@ set key font "Courier,20" nobox
 set format y "10^{%+1T}"
 set terminal postscript color enhanced
 set output "demoplot.eps"
-plot "ZHS/shower_1000000.0_-0.3_ZHS.dat" w lp pt 2 lc -1 title "ZHS, 100 TeV, {/Symbol D}{/Symbol Q} = -0.3 deg", "RalstonBuniy/shower_1000000.0_-0.3_JCAC.dat" w lp pt 6 lc -1 title "JCAC, 100 TeV, {/Symbol D}{/Symbol Q} = -0.3 deg"
+plot "ZHS/shower_100000.0_-0.3_ZHS.dat" w lp pt 2 lc -1 title "ZHS, 100 TeV, {/Symbol D}{/Symbol Q} = -0.3 deg", "RalstonBuniy/shower_100000.0_-0.3_JCAC_LPM.dat" w lp pt 6 lc -1 title "JCAC+LPM, 100 TeV, {/Symbol D}{/Symbol Q} = -0.3 deg"
